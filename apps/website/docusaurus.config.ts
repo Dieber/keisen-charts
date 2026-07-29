@@ -1,6 +1,12 @@
+import path from 'path';
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+
+const keisenPackages = [
+  path.resolve(__dirname, '../../packages/core/src'),
+  path.resolve(__dirname, '../../packages/react/src'),
+];
 
 const config: Config = {
   title: 'Keisen',
@@ -34,6 +40,51 @@ const config: Config = {
     },
   },
 
+  plugins: [
+    () => ({
+      name: 'keisen-charts-workspace',
+      configureWebpack(_config, isServer, {getJSLoader}) {
+        return {
+          resolve: {
+            alias: {
+              '@keisen-charts/core': path.resolve(
+                __dirname,
+                '../../packages/core/src',
+              ),
+              '@keisen-charts/react': path.resolve(
+                __dirname,
+                '../../packages/react/src',
+              ),
+              '@keisen-charts/react/toolkit': path.resolve(
+                __dirname,
+                '../../packages/react/src/toolkit',
+              ),
+            },
+            fullySpecified: false,
+          },
+          module: {
+            rules: [
+              {
+                test: /\.tsx?$/,
+                include: keisenPackages,
+                use: [getJSLoader({isServer})],
+              },
+            ],
+          },
+          // 副图显隐会触发多 canvas 同帧 resize；该错误良性，勿挡开发 overlay
+          devServer: {
+            client: {
+              overlay: {
+                runtimeErrors: (error: Error) =>
+                  !/ResizeObserver loop/.test(error?.message ?? ''),
+              },
+            },
+          },
+        };
+      },
+    }),
+  ],
+
   presets: [
     [
       'classic',
@@ -57,6 +108,8 @@ const config: Config = {
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
+      defaultMode: "light",
+      disableSwitch: false,
       respectPrefersColorScheme: true,
     },
     navbar: {

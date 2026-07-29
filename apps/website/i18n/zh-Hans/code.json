@@ -11,6 +11,12 @@
   "landing.brand.language": {
     "message": "语言"
   },
+  "landing.brand.theme.light": {
+    "message": "浅色"
+  },
+  "landing.brand.theme.dark": {
+    "message": "深色"
+  },
   "landing.brand.locale.zhHans": {
     "message": "简体中文"
   },
@@ -28,6 +34,75 @@
   },
   "landing.intro.body": {
     "message": "Keisen 之名来自日语「罫線」—— 旧时日本金融语境中对 K 线图表的称呼。我们以此为名，希望用熟悉的组件写法，把专业图表能力带到现代 Web：声明即绘制，库本身尽量退到幕后。"
+  },
+  "landing.walkthrough.label": {
+    "message": "体验"
+  },
+  "landing.walkthrough.static.label": {
+    "message": "数据"
+  },
+  "landing.walkthrough.static.title": {
+    "message": "静态序列"
+  },
+  "landing.walkthrough.static.body": {
+    "message": "传入 K 线数组即可出图。截取或替换数组，视图会跟着变。"
+  },
+  "landing.walkthrough.static.full": {
+    "message": "完整序列"
+  },
+  "landing.walkthrough.static.half": {
+    "message": "前半段"
+  },
+  "landing.walkthrough.dynamic.label": {
+    "message": "实时"
+  },
+  "landing.walkthrough.dynamic.title": {
+    "message": "动态数据"
+  },
+  "landing.walkthrough.dynamic.body": {
+    "message": "用 getData 拉历史，用 onSubscribe 推 tick。切换品种或周期，无需重写图表树。"
+  },
+  "landing.walkthrough.theme.label": {
+    "message": "主题"
+  },
+  "landing.walkthrough.theme.title": {
+    "message": "主题系统"
+  },
+  "landing.walkthrough.theme.body": {
+    "message": "明暗模式、内置色板，或自行注册主题。Token 会贯通每一个 pane。"
+  },
+  "landing.walkthrough.theme.light": {
+    "message": "浅色"
+  },
+  "landing.walkthrough.theme.dark": {
+    "message": "深色"
+  },
+  "landing.walkthrough.indicators.label": {
+    "message": "指标"
+  },
+  "landing.walkthrough.indicators.title": {
+    "message": "主副图层"
+  },
+  "landing.walkthrough.indicators.body": {
+    "message": "主图挂 MA，下方组合成交量与 MACD。切换显隐不必拆掉整张图。"
+  },
+  "landing.walkthrough.drawings.label": {
+    "message": "画线"
+  },
+  "landing.walkthrough.drawings.title": {
+    "message": "画图工具"
+  },
+  "landing.walkthrough.drawings.body": {
+    "message": "用代码落下斐波那契、水平线，也可以让用户在画布上直接画。"
+  },
+  "landing.walkthrough.draw.fib": {
+    "message": "斐波那契"
+  },
+  "landing.walkthrough.draw.horizontal": {
+    "message": "水平线"
+  },
+  "landing.walkthrough.draw.clear": {
+    "message": "清空"
   },
   "landing.features.label": {
     "message": "特性"

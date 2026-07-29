@@ -16,17 +16,21 @@
 
 .card {
   padding: 1rem 1.1rem 1.05rem;
-  background: #ffffff;
-  border: 1px solid rgba(28, 27, 25, 0.08);
+  background: var(--landing-bg, #ffffff);
+  border: 1px solid var(--landing-line, rgba(28, 27, 25, 0.08));
   box-shadow: 0 12px 40px rgba(28, 27, 25, 0.06);
   font-family: 'Noto Sans JP', 'Raleway', sans-serif;
-  color: #1c1b19;
+  color: var(--landing-ink, #1c1b19);
   text-align: left;
   user-select: none;
   pointer-events: none;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:global([data-theme='dark']) .card {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
 .cardHeader {
@@ -43,12 +47,12 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  border: 1px solid rgba(28, 27, 25, 0.12);
+  border: 1px solid var(--landing-line, rgba(28, 27, 25, 0.12));
   font-size: 0.62rem;
   font-weight: 300;
   letter-spacing: 0.04em;
-  color: #5c574f;
-  background: #f7f6f4;
+  color: var(--landing-muted, #5c574f);
+  background: var(--landing-soft, #f7f6f4);
 }
 
 .meta {
@@ -68,7 +72,7 @@
 .handle {
   font-size: 0.68rem;
   font-weight: 300;
-  color: #8a847a;
+  color: var(--landing-muted, #8a847a);
   letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;

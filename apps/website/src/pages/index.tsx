@@ -4,6 +4,7 @@ import Link from "@docusaurus/Link";
 import Translate, { translate } from "@docusaurus/Translate";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { useColorMode } from "@docusaurus/theme-common";
 import Layout from "@theme/Layout";
 
 import styles from "./index.module.css";
@@ -22,6 +23,25 @@ const LOCALE_OPTIONS = [
     label: "English",
   },
 ] as const;
+
+function BrandThemeToggle(): ReactNode {
+  const { colorMode, setColorMode } = useColorMode();
+  const isDark = colorMode === "dark";
+  return (
+    <button
+      type="button"
+      className={`${styles.brandLink} ${styles.langTrigger}`}
+      onClick={() => setColorMode(isDark ? "light" : "dark")}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+    >
+      {isDark ? (
+        <Translate id="landing.brand.theme.light">Light</Translate>
+      ) : (
+        <Translate id="landing.brand.theme.dark">Dark</Translate>
+      )}
+    </button>
+  );
+}
 
 function BrandLangMenu(): ReactNode {
   const {
@@ -80,6 +100,7 @@ function BrandHero(): ReactNode {
           >
             <Translate id="landing.brand.github">GitHub</Translate>
           </a>
+          <BrandThemeToggle />
           <BrandLangMenu />
         </nav>
       </div>
@@ -256,6 +277,14 @@ export default function Home(): ReactNode {
         <main>
           <Intro />
           <hr className={styles.divider} />
+          <BrowserOnly fallback={null}>
+            {() => {
+              const FeatureWalkthrough =
+                require("@site/src/components/landing/FeatureWalkthrough")
+                  .default;
+              return <FeatureWalkthrough />;
+            }}
+          </BrowserOnly>
           <Features />
           <hr className={styles.divider} />
           <SocialProof />

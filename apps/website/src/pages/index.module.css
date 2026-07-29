@@ -1,5 +1,5 @@
 /**
- * Keisen landing — white field, ultralight type, restrained motion.
+ * Keisen landing — ultralight type, restrained motion.
  */
 
 .page {
@@ -7,17 +7,35 @@
   --landing-muted: #8a847a;
   --landing-line: rgba(28, 27, 25, 0.08);
   --landing-soft: #f4f3f1;
+  --landing-bg: #ffffff;
+  --landing-body-text: #4a4640;
+  --landing-footer-copy: #b0aaa0;
+  --landing-grid-line: rgba(28, 27, 25, 0.035);
+  --landing-social-glow: rgba(28, 27, 25, 0.03);
   --landing-display: 'Raleway', 'Noto Sans JP', sans-serif;
   --landing-body: 'Noto Sans JP', 'Raleway', sans-serif;
 
-  background: #ffffff;
+  background: var(--landing-bg);
   color: var(--landing-ink);
   font-family: var(--landing-body);
   font-weight: 300;
-  overflow-x: hidden;
+  /* clip 不建立 scroll container，避免打断 FeatureWalkthrough 的 sticky */
+  overflow-x: clip;
 }
 
-/* —— Brand hero (500px, pure white) —— */
+:global([data-theme='dark']) .page {
+  --landing-ink: #f3f0ea;
+  --landing-muted: #9a948a;
+  --landing-line: rgba(243, 240, 234, 0.1);
+  --landing-soft: #2a2825;
+  --landing-bg: #121110;
+  --landing-body-text: #c4beb4;
+  --landing-footer-copy: #6e695f;
+  --landing-grid-line: rgba(243, 240, 234, 0.05);
+  --landing-social-glow: rgba(243, 240, 234, 0.04);
+}
+
+/* —— Brand hero —— */
 
 .brand {
   position: relative;
@@ -26,7 +44,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: var(--landing-bg);
   isolation: isolate;
 }
 
@@ -38,8 +56,8 @@
     90deg,
     transparent,
     transparent 47px,
-    rgba(28, 27, 25, 0.035) 47px,
-    rgba(28, 27, 25, 0.035) 48px
+    var(--landing-grid-line) 47px,
+    var(--landing-grid-line) 48px
   );
   mask-image: linear-gradient(
     180deg,
@@ -202,7 +220,7 @@
   font-size: clamp(0.95rem, 2.2vw, 1.05rem);
   line-height: 1.85;
   letter-spacing: 0.02em;
-  color: #4a4640;
+  color: var(--landing-body-text);
 }
 
 .divider {
@@ -274,7 +292,7 @@
   font-size: 0.95rem;
   line-height: 1.75;
   letter-spacing: 0.015em;
-  color: #4a4640;
+  color: var(--landing-body-text);
 }
 
 /* —— Social / tweets —— */
@@ -303,7 +321,7 @@
   background:
     radial-gradient(
       ellipse 60% 45% at 50% 55%,
-      rgba(28, 27, 25, 0.03),
+      var(--landing-social-glow),
       transparent 70%
     );
 }
@@ -323,7 +341,7 @@
 .footer {
   padding: 3.5rem 1.5rem 4rem;
   text-align: center;
-  background: #ffffff;
+  background: var(--landing-bg);
   border-top: 1px solid var(--landing-line);
 }
 
@@ -367,7 +385,7 @@
   font-weight: 200;
   font-size: 0.7rem;
   letter-spacing: 0.12em;
-  color: #b0aaa0;
+  color: var(--landing-footer-copy);
 }
 
 /* —— Motion —— */

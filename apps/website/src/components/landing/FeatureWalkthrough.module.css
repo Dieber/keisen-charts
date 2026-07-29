@@ -1,0 +1,240 @@
+.root {
+  --landing-ink: #1c1b19;
+  --landing-muted: #8a847a;
+  --landing-line: rgba(28, 27, 25, 0.08);
+  --landing-soft: #f4f3f1;
+  --landing-bg: #ffffff;
+  --landing-body-text: #4a4640;
+  --landing-display: "Raleway", "Noto Sans JP", sans-serif;
+  --landing-body: "Noto Sans JP", "Raleway", sans-serif;
+
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--landing-line);
+  background: var(--landing-bg);
+  color: var(--landing-ink);
+  font-family: var(--landing-body);
+  font-weight: 300;
+}
+
+:global([data-theme="dark"]) .root {
+  --landing-ink: #f3f0ea;
+  --landing-muted: #9a948a;
+  --landing-line: rgba(243, 240, 234, 0.1);
+  --landing-soft: #2a2825;
+  --landing-bg: #121110;
+  --landing-body-text: #c4beb4;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.38fr) minmax(0, 0.62fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vh, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  box-sizing: border-box;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding-right: 0.5rem;
+}
+
+.sectionLabel {
+  margin: 0 0 0.75rem;
+  font-family: var(--landing-display);
+  font-weight: 200;
+  font-size: 0.7rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  text-indent: 0.42em;
+  color: var(--landing-muted);
+}
+
+.progress {
+  margin: 0 0 1.75rem;
+  font-family: var(--landing-display);
+  font-weight: 200;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  color: var(--landing-muted);
+}
+
+.stepLabel {
+  margin: 0 0 0.65rem;
+  font-family: var(--landing-display);
+  font-weight: 200;
+  font-size: 0.7rem;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  text-indent: 0.36em;
+  color: var(--landing-muted);
+}
+
+.stepTitle {
+  margin: 0 0 1rem;
+  font-family: var(--landing-display);
+  font-weight: 200;
+  font-size: clamp(1.55rem, 2.8vw, 2.15rem);
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  color: var(--landing-ink);
+}
+
+.stepBody {
+  margin: 0;
+  max-width: 22rem;
+  font-weight: 300;
+  font-size: clamp(0.9rem, 1.4vw, 1rem);
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  color: var(--landing-body-text);
+}
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.copyBody {
+  min-height: 11rem;
+}
+
+.copyBodyEnterDown {
+  animation: copyEnterDown 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.copyBodyEnterUp {
+  animation: copyEnterUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes copyEnterDown {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes copyEnterUp {
+  from {
+    opacity: 0;
+    transform: translateY(-1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  appearance: none;
+  margin: 0;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--landing-line);
+  background: transparent;
+  color: var(--landing-ink);
+  font-family: var(--landing-display);
+  font-weight: 300;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.actionBtn:hover {
+  border-color: rgba(28, 27, 25, 0.28);
+}
+
+.actionBtnActive {
+  background: var(--landing-soft);
+  border-color: var(--landing-line);
+}
+
+.chart {
+  flex: none;
+  width: 100%;
+  height: min(400px, calc(100vh - 12rem));
+  max-height: 400px;
+  min-height: 0;
+  min-width: 0;
+  border: 1px solid var(--landing-line);
+  background: var(--landing-bg);
+  overflow: hidden;
+}
+
+/* 画线：header 按钮在框外，仅 pane 区域描边（同其他步的 .actions + .chart） */
+.drawingsLayout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.drawingsLayout > div {
+  height: auto !important;
+  min-height: 0;
+  background: transparent !important;
+}
+
+.drawingsLayout > div > :last-child {
+  flex: none !important;
+  height: min(400px, calc(100vh - 12rem));
+  max-height: 400px;
+  border: 1px solid var(--landing-line);
+  background: var(--landing-bg);
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .root {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionBtn {
+    transition: none;
+  }
+
+  .copyBodyEnterDown,
+  .copyBodyEnterUp {
+    animation: none;
+  }
+}

@@ -32,8 +32,106 @@ export const KLINE_SNAPSHOTS: Record<string, DocKlineBar[]> = {
   "ETHUSDT:1d": eth1d as DocKlineBar[],
 };
 
+function normalizeSymbol(symbol?: string): string {
+  const s = (symbol ?? "BTCUSDT").toUpperCase();
+  if (s === "ETH" || s.startsWith("ETH")) return "ETHUSDT";
+  return "BTCUSDT";
+}
+
+function resolutionToInterval(resolution?: string): string {
+  const r = resolution ?? "1";
+  if (r === "1D" || r === "1d") return "1d";
+  if (r === "1W" || r === "1w") return "1d";
+  if (r === "1M") return "1d";
+  const minutes = Number(r);
+  if (minutes >= 60 && minutes % 60 === 0) return `${minutes / 60}h`;
+  if (Number.isFinite(minutes) && minutes > 0) return `${minutes}m`;
+  return "1m";
+}
+
+function snapshotKey(symbol?: string, resolution?: string): string {
+  return `${normalizeSymbol(symbol)}:${resolutionToInterval(resolution)}`;
+}
+
+function stepMs(resolution?: string): number {
+  const r = resolution ?? "1";
+  if (r === "1D" || r === "1d") return 86_400_000;
+  const minutes = Number(r);
+  if (Number.isFinite(minutes) && minutes > 0) return minutes * 60_000;
+  return 60_000;
+}
+
+/** 按 symbol / resolution 取预加载快照（拷贝） */
+export function getBars(symbol?: string, resolution?: string): DocKlineBar[] {
+  const key = snapshotKey(symbol, resolution);
+  const bars = KLINE_SNAPSHOTS[key] ?? KLINE_SNAPSHOTS["BTCUSDT:1m"]!;
+  return bars.map((b) => ({ ...b }));
+}
+
 /** 默认 BTC 1m，兼容旧示例 */
-export const BTC_KLINES = KLINE_SNAPSHOTS["BTCUSDT:1m"]!;
+export const BTC_KLINES = getBars("BTCUSDT", "1");
+
+export async function getKlineData(params: {
+  symbol?: string;
+  resolution?: string;
+}): Promise<DocKlineBar[]> {
+  return getBars(params.symbol, params.resolution);
+}
+
+/** @deprecated 用 getKlineData */
+export async function getBtcData(
+  params: {
+    symbol?: string;
+    resolution?: string;
+  } = {},
+): Promise<DocKlineBar[]> {
+  return getKlineData({
+    symbol: params.symbol ?? "BTCUSDT",
+    resolution: params.resolution ?? "1",
+  });
+}
+
+/** 本地 mock 推送：更新最后一根 / 周期性开新棒 */
+export function subscribeKline(
+  params: { symbol?: string; resolution?: string },
+  emit: {
+    bar: (bar: DocKlineBar) => void;
+  },
+) {
+  const bars = getBars(params.symbol, params.resolution);
+  let last: DocKlineBar = { ...bars[bars.length - 1]! };
+  const step = stepMs(params.resolution);
+  const scale = normalizeSymbol(params.symbol) === "ETHUSDT" ? 0.8 : 12;
+  let tick = 0;
+  const id = window.setInterval(() => {
+    const jitter = (Math.random() - 0.5) * scale;
+    if (tick > 0 && tick % 5 === 0) {
+      last = {
+        t: last.t + step,
+        o: last.c,
+        h: Math.max(last.c, last.c + jitter),
+        l: Math.min(last.c, last.c + jitter),
+        c: last.c + jitter,
+        v: Math.max(0.01, last.v * (0.6 + Math.random() * 0.8)),
+      };
+    } else {
+      const c = last.c + jitter;
+      last = {
+        ...last,
+        c,
+        h: Math.max(last.h, c, last.o),
+        l: Math.min(last.l, c, last.o),
+        v: last.v + Math.random() * 0.5,
+      };
+    }
+    emit.bar({ ...last });
+    tick += 1;
+  }, 900);
+  return () => window.clearInterval(id);
+}
+
+/** @deprecated 用 subscribeKline */
+export const subscribeBtc = subscribeKline;
 
 /** Sandpack 注入路径（React 模板根路径） */
 export const KLINE_PATH = "/kline.ts";
