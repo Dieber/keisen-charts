@@ -1,7 +1,7 @@
 import type { Framework } from "./frameworkPreference";
 
 /** Published package version used by Sandpack demos */
-export const KEISEN_NPM_VERSION = "0.1.6";
+export const KEISEN_NPM_VERSION = "0.1.7";
 
 export const SANDPACK_REACT_DEPS = {
   react: "^19.0.0",
