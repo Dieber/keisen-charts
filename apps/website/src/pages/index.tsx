@@ -8,6 +8,7 @@ import { useColorMode } from "@docusaurus/theme-common";
 import Layout from "@theme/Layout";
 
 import styles from "./index.module.css";
+import BrandCanvas from "../components/landing/BrandCanvas";
 
 const GITHUB_URL = "https://github.com/Dieber/keisen-charts";
 
@@ -85,7 +86,7 @@ function BrandHero(): ReactNode {
   const docsUrl = useBaseUrl("/docs/introduction");
   return (
     <header className={styles.brand}>
-      <div className={styles.brandGrid} aria-hidden />
+      <BrandCanvas />
       <div className={styles.brandInner}>
         <h1 className={styles.wordmark}>keisen</h1>
         <nav className={styles.brandLinks} aria-label="Keisen">
