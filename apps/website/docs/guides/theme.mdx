@@ -13,6 +13,43 @@ import {
 
 Theme has three layers: `mode` (light/dark), `theme` (skin), `upDown` (up/down polarity). They are orthogonal and can be switched independently.
 
+## Theme tokens
+
+Each mode’s palette is a `ThemeTokens` object — semantic colors for chart chrome, candles, and optional indicator series. Author `up` / `down` as green-up (green up / red down); polarity is applied at resolve time.
+
+| Token | Role |
+| --- | --- |
+| `background` | Chart canvas background |
+| `grid` | Grid lines |
+| `axisTick` | Axis tick marks |
+| `axisText` | Axis labels |
+| `crosshair` | Crosshair lines |
+| `crosshairLabelBg` | Crosshair label background |
+| `crosshairLabelText` | Crosshair label text |
+| `up` | Up candle / up semantic color |
+| `down` | Down candle / down semantic color |
+| `accent` | Accent (selection, highlights, etc.) |
+| `series?` | Optional indicator colors: `ma[]`, `ema`, `smma`, `boll` (`upper` / `middle` / `lower`), `sar` |
+
+`Partial<ThemeTokens>` overrides shallow-merge onto the current mode’s base palette.
+
+## Default skin
+
+Built-in preset id `"default"` (`defaultTheme`). Look aligns with a TradingView-style dark palette; both modes use a transparent canvas so the host page background shows through.
+
+| Token | Dark | Light |
+| --- | --- | --- |
+| `background` | `transparent` | `transparent` |
+| `grid` | `#2a2e39` | `#e0e3eb` |
+| `axisTick` | `#787B86` | `#9598a1` |
+| `axisText` | `#D1D4DC` | `#131722` |
+| `crosshair` | `#758696` | `#9598a1` |
+| `crosshairLabelBg` | `#2962FF` | `#2962FF` |
+| `crosshairLabelText` | `#FFFFFF` | `#FFFFFF` |
+| `up` | `#26A69A` | `#089981` |
+| `down` | `#EF5350` | `#F23645` |
+| `accent` | `#2962FF` | `#2962FF` |
+
 ## Light / dark mode
 
 `mode` is `"light"` | `"dark"`. You can also pass `Partial<ThemeTokens>`, shallow-merged onto the current mode’s default palette — useful for per-mode custom colors.

@@ -13,6 +13,43 @@ import {
 
 主题由三层组成：`mode`（明暗）、`theme`（皮肤）、`upDown`（涨跌极性）。彼此正交，可单独切换。
 
+## 主题 Token
+
+每个 mode 的色板是一份 `ThemeTokens`：图表底色、K 线与可选指标序列的语义色。`up` / `down` 始终按绿涨红跌书写，极性在解析时再套用。
+
+| Token | 用途 |
+| --- | --- |
+| `background` | 图表画布背景 |
+| `grid` | 网格线 |
+| `axisTick` | 坐标轴刻度 |
+| `axisText` | 坐标轴文字 |
+| `crosshair` | 十字光标线 |
+| `crosshairLabelBg` | 十字光标标签背景 |
+| `crosshairLabelText` | 十字光标标签文字 |
+| `up` | 上涨 K 线 / 上涨语义色 |
+| `down` | 下跌 K 线 / 下跌语义色 |
+| `accent` | 强调色（选中、高亮等） |
+| `series?` | 可选指标色：`ma[]`、`ema`、`smma`、`boll`（`upper` / `middle` / `lower`）、`sar` |
+
+传入 `Partial<ThemeTokens>` 时，会浅合并到当前 mode 的基础色板上。
+
+## 默认皮肤
+
+内置 preset id 为 `"default"`（`defaultTheme`）。观感对齐 TradingView 风格暗色系；明暗模式画布均为透明，便于透出宿主页面背景。
+
+| Token | Dark | Light |
+| --- | --- | --- |
+| `background` | `transparent` | `transparent` |
+| `grid` | `#2a2e39` | `#e0e3eb` |
+| `axisTick` | `#787B86` | `#9598a1` |
+| `axisText` | `#D1D4DC` | `#131722` |
+| `crosshair` | `#758696` | `#9598a1` |
+| `crosshairLabelBg` | `#2962FF` | `#2962FF` |
+| `crosshairLabelText` | `#FFFFFF` | `#FFFFFF` |
+| `up` | `#26A69A` | `#089981` |
+| `down` | `#EF5350` | `#F23645` |
+| `accent` | `#2962FF` | `#2962FF` |
+
 ## 明暗模式
 
 `mode` 取 `"light"` | `"dark"`。也可传入 `Partial<ThemeTokens>`，浅合并到当前 mode 的默认色板上——用来做明暗各自的自定义配置。
