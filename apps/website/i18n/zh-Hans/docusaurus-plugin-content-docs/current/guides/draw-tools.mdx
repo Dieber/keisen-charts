@@ -1,0 +1,107 @@
+---
+sidebar_position: 10
+title: 画线工具
+description: 在主图上画水平线、射线、斐波那契等；可用鼠标点选，也可用代码创建。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnableDrawByCode,
+  runnableDrawByTool,
+} from '@site/src/examples/runnable/draw-tools';
+
+画线工具让你在 K 线上叠加标注图形——例如支撑/阻力水平线、趋势射线、斐波那契回调。图形画在图表 pane 上（主图 `paneId` 为 `"main"`），可拖动锚点；库负责命中检测、重绘与和十字线的互斥。
+
+两种用法：
+
+| 方式 | 怎么做 |
+| --- | --- |
+| **工具画线** | `setOverlay(工具 id)` 进入放置模式，在图上按点数依次点击完成 |
+| **代码画线** | `addDrawing({ tool, paneId, points, style })` 直接写入，适合脚本 / 回测标注 |
+
+入口：`useDrawOverlay()`，从 `@keisen-charts/react/toolkit` 或 `@keisen-charts/vue/toolkit` 导入。必须在 `KeisenChart` 子树内调用（如 `header`）。
+
+## 内置工具
+
+| id | 点数 | 说明 |
+| --- | --- | --- |
+| `horizontal` | 1 | 水平线（固定价格） |
+| `vertical` | 1 | 垂直线（固定时间 / bar） |
+| `priceChannel` | 1 | 价格通道（水平射向右侧） |
+| `ray` | 2 | 射线（两点定方向） |
+| `fibRetracement` | 2 | 斐波那契回调 |
+| `parallelLines` | 3 | 平行直线 |
+
+## API
+
+### `useDrawOverlay(options?)`
+
+| `options` | 类型 | 说明 |
+| --- | --- | --- |
+| `stickyTool` | `boolean?` | 画完是否保持当前工具；默认 `false`（画完回浏览） |
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `activeTool` | `DrawingToolId \| null`（Vue 为 `Ref`） | 当前放置工具；`null` 为浏览（十字线） |
+| `setOverlay` | `(tool: DrawingToolId \| null) => void` | 切换工具；传 `null` 退出放置 |
+| `drawings` | `Drawing[]` | 当前全部图形 |
+| `selectedIds` | `string[]` | 选中图形 id |
+| `stickyTool` / `setStickyTool` | `boolean` / setter | 画完是否粘滞工具 |
+| `addDrawing` | 见下表 | 程序化创建，返回 id |
+| `updateDrawing` | `(id, patch) => void` | 改 style / points / visible 等 |
+| `removeDrawing` | `(id) => void` | 删除一根 |
+| `clearDrawings` | `(paneId?) => void` | 清空；可限定 pane |
+| `serialize` | `() => string` | 导出 JSON |
+| `hydrate` | `(json) => void` | 从 JSON 恢复 |
+| `toolbarProps` | `DrawToolsToolbarProps` | 可直接喂给自写工具条 |
+
+### `addDrawing(drawing)`
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `tool` | `DrawingToolId` | 工具类型 |
+| `paneId` | `string` | 主图用 `"main"` |
+| `points` | `{ barIndex, value, time? }[]` | 锚点；缺 `time` 时库按当前 kline 补 |
+| `style` | `{ stroke, lineWidth, lineDash? }?` | 描边；有默认蓝 |
+| `id` | `string?` | 可选；不传则自动生成 |
+| `editable` / `locked` / `visible` | `boolean?` | 默认可拖、未锁、可见 |
+
+### `toolbarProps` / `DrawToolsToolbarProps`
+
+| 字段 | 说明 |
+| --- | --- |
+| `tools` | `DRAWING_TOOL_METAS`（id + 中英文 label） |
+| `activeTool` | 当前工具 |
+| `setOverlay` | 同 hook |
+| `clearDrawings` | 同 hook |
+
+工具条 UI 请复制文档示例再改；库不内置成品组件。
+
+### 相关类型速查
+
+```ts
+type DrawingPoint = { barIndex: number; time: number; value: number };
+type DrawingStyle = { stroke: string; lineWidth: number; lineDash?: number[] };
+type Drawing = {
+  id: string;
+  tool: DrawingToolId;
+  paneId: string;
+  points: DrawingPoint[];
+  style: DrawingStyle;
+  editable?: boolean;
+  locked?: boolean;
+  visible?: boolean;
+};
+```
+
+## 示例：用代码画线
+
+按钮调用 `addDrawing`，在最新价画水平线、在中段到最新价画射线：
+
+<SandpackDemo id="draw-by-code" files={runnableDrawByCode} height={500} />
+
+## 示例：用工具画线
+
+选中工具后在图上点击落笔（水平线点 1 下，射线点 2 下，平行线点 3 下）：
+
+<SandpackDemo id="draw-by-tool" files={runnableDrawByTool} height={500} />

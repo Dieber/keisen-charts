@@ -1,0 +1,74 @@
+---
+sidebar_position: 3
+title: 受控与非受控
+description: 周期、主题、时区、语言等偏好：选一条主路径，不要制造两个真相源（SSOT)。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnableControlled,
+  runnableUncontrolled,
+} from '@site/src/examples/runnable/controlled';
+
+图表有一批「偏好」状态：周期、皮肤、明暗、涨跌色、时区、语言。每一项都可以用两种方式驱动——**选一条主路径即可**。
+
+## 概念
+
+| | **非受控** | **受控** |
+| --- | --- | --- |
+| 真相源（SSOT) | 图表内部 store | 宿主 App 的 state / ref |
+| 怎么改 | 图内 `useKline*` hook 的 `setXxx` | 改父 state，再经 prop 灌入 |
+| 宿主要不要持有 | 不必 | 必须持续传当前值，并用回调接住图内修改 |
+| 典型场景 | 工具栏只在图内，宿主不关心 | 跟 URL / 全局设置 / 多图 / 旁路 UI 同步 |
+
+:::tip
+可以混用：例如周期受控、主题非受控。不要对**同一偏好**两边都当真相源（SSOT)。
+:::
+
+## 怎么用
+
+### 非受控
+
+1. 可选：在 `KeisenChart` 上传一次初值（`resolution="1"` 等）
+2. 在 `header`（或其它图表子树）里调 `useKlineResolution` 等 hook
+3. 用返回的 `setXxx` 切换；App **不要**再 `useState` 同一字段，也**不必**绑 `onXxxChange`
+
+### 受控
+
+1. App 用 `useState` / `ref` 持有当前值
+2. 持续传给对应 prop（`resolution={resolution}`）
+3. 接上 `onXxxChange` / Vue `@xxx-change`，把图内修改写回 App
+4. 旁路 UI 直接改 App state；图内 header 仍可用 hook（`setXxx` 会触发回调）
+
+## 支持双模式的 API
+
+| 偏好 | prop | React 回调 | Vue 事件 | hook / composable |
+| --- | --- | --- | --- | --- |
+| 周期 | `resolution` | `onResolutionChange` | `resolution-change` | `useKlineResolution` → `setResolution` |
+| 皮肤 | `theme` | `onThemeChange` | `theme-change` | `useKlineTheme` → `setTheme` |
+| 明暗 | `mode` | `onModeChange` | `mode-change` | `useKlineTheme` → `setMode` |
+| 涨跌色 | `upDown` | `onUpDownChange` | `up-down-change` | `useKlineTheme` → `setUpDown` |
+| 时区 | `timezone` | `onTimezoneChange` | `timezone-change` | `useKlineTimezone` → `setTimezone` |
+| 语言 | `locale` | `onLocaleChange` | `locale-change` | `useKlineLocale` → `setLocale` |
+
+`theme` / `mode` / `upDown` 彼此正交，各自可独立选受控或非受控。
+
+**只有 prop、没有对称 hook 的**（本来就在宿主）：
+
+| Prop | 说明 |
+| --- | --- |
+| `symbol` | 标的由宿主持有；改 prop 即可 |
+| `priceFormat` / `showDataPanel` | 配置向 prop |
+| `data` / `getData` / `onSubscribe` | 数据接入，不是展示偏好 |
+
+## 非受控示例
+
+App 只传初值；工具栏在 `header` 里用全部 hook 切换。
+
+<SandpackDemo id="uncontrolled" files={runnableUncontrolled} height={500} />
+
+## 受控示例
+
+App 持有全部偏好 state；外部工具栏改 state，经 prop + onChange 与图表同步。
+
+<SandpackDemo id="controlled" files={runnableControlled} height={500} />

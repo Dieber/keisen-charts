@@ -1,0 +1,167 @@
+body {
+  margin: 0;
+  background: #0f0f0f;
+  color: #eee;
+}
+
+.chart-container {
+  --draw-tools-rail-width: 80px;
+  width: 1000px;
+  height: 560px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.pointer-hud {
+  position: absolute;
+  right: 8px;
+  bottom: 28px;
+  z-index: 2;
+  max-width: calc(100% - 16px);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font: 11px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #c8ccd4;
+  background: rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.theme-chrome {
+  padding: 12px 12px 0;
+}
+
+.theme-chrome.mode-light {
+  color: #131722;
+}
+
+.theme-chrome.mode-light .toolbar button,
+.theme-chrome.mode-light .toolbar-select {
+  border-color: #c0c3c8;
+  background: #fff;
+  color: #131722;
+}
+
+.theme-chrome.mode-light .toolbar button.active {
+  background: #2962ff;
+  border-color: #2962ff;
+  color: #fff;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 0 8px;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar button,
+.toolbar-select {
+  padding: 4px 12px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #eee;
+  cursor: pointer;
+}
+
+.toolbar-select {
+  min-width: 72px;
+}
+
+.toolbar button.active {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.theme-neon .theme-chrome.mode-dark .toolbar button,
+.theme-neon .theme-chrome.mode-dark .toolbar-select {
+  border-color: #4a2d6a;
+  background: #160a24;
+  color: #e0b0ff;
+}
+
+.theme-neon .theme-chrome.mode-dark .toolbar button.active {
+  background: #7b2cbf;
+  border-color: #7b2cbf;
+  color: #fff;
+}
+
+/* Playground-only host for IndicatorSettingsPanel (not part of toolkit scaffold) */
+.indicator-panel-host {
+  position: relative;
+}
+
+.indicator-panel-shell {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  right: 0;
+}
+
+/* Left rail beside the chart (reserves space via .draw-tools-open padding) */
+.chart-container.draw-tools-open {
+  padding-left: var(--draw-tools-rail-width);
+}
+
+.draw-tools-rail {
+  position: absolute;
+  z-index: 15;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--draw-tools-rail-width);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 8px 4px;
+  border-right: 1px solid #333;
+  background: #141414;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+.theme-chrome.mode-light .draw-tools-rail {
+  border-right-color: #d4d4d8;
+  background: #f5f5f5;
+}
+
+.theme-neon .theme-chrome.mode-dark .draw-tools-rail {
+  border-right-color: #4a2d6a;
+  background: #12081c;
+}
+
+.draw-tools-rail .keisen-toolkit-draw-tools {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    width: 100%;
+  }
+
+  .indicator-panel-shell {
+    position: fixed;
+    top: 56px;
+    right: 12px;
+    left: 12px;
+  }
+
+  .indicator-panel-shell .keisen-toolkit-indicator {
+    width: 100%;
+    max-width: none;
+    height: min(540px, calc(100vh - 80px));
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@keisen-charts/core",
+  "version": "0.1.5",
+  "description": "Keisen chart core: store, indicators, canvas rendering",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dieber/keisen-charts.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "kline",
+    "candlestick",
+    "chart",
+    "canvas"
+  ]
+}

@@ -1,0 +1,96 @@
+---
+sidebar_position: 8
+title: 主图 / 副图
+description: 用 Chart 组件堆叠主图、成交量、MACD 等；也可用指标工具按设置动态组装。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnablePanes,
+  runnablePanesIndicator,
+} from '@site/src/examples/runnable/panes';
+
+一页里同时看价格、成交量与指标。你只声明 Chart + Layer；高度与轴由 Keisen 布局。
+
+## 共性结构
+
+```text
+KeisenChart
+  ├─ MainKlineChart → KlineCandles, MA, …
+  ├─ VolumeChart    → VOL, MAVOL, …
+  └─ MACDChart      → DIF, DEA, MACD
+```
+
+:::note
+未写 `MainKlineChart` 时自动挂默认主图（仅蜡烛）。
+:::
+
+手写声明式组合：
+
+<SandpackDemo id="panes" files={runnablePanes} height={540} />
+
+## 用指标工具管理显示与配置
+
+手写每棵 Chart / Layer 树在指标一多时会很啰嗦。`@keisen-charts/react/toolkit`（或 `@keisen-charts/vue/toolkit`）里的 `useKlineIndicator` 维护一套设置（显隐、颜色、参数），并据此拼出：
+
+- `mainLayers` → 挂进 `MainKlineChart`（MA / EMA / BOLL…）
+- `paneCharts` → 挂在主图下方（Volume / MACD / RSI…）
+- `panelProps` → 喂给设置面板（显隐 / 改参 / 改色）
+
+设置面板 UI **高度客制化**，库不内置成品组件。下面示例用工具栏按钮弹出面板（显隐 / 子线颜色 / 均线增减）；可复制后改成 Popover / Drawer。
+
+### API：`useKlineIndicator(options?)`
+
+| `options` | 类型 | 说明 |
+| --- | --- | --- |
+| `defaults` | `Partial<Record<id, Partial<IndicatorSetting>>>` | 覆盖内置默认显隐 / 颜色 / 参数 |
+| `maPeriods` | `number[]?` | MA 默认周期列表 |
+| `extras` | `useKlineIndicatorExtra[]?` | 自定义指标（如 Bias）参与组装 |
+| `compose` | `boolean?` | 默认 `true`；`false` 时不生成 `mainLayers` / `paneCharts`（只拿 settings） |
+
+| 返回值 | 说明 |
+| --- | --- |
+| `settings` | 当前各指标设置（Vue 为 `Ref`） |
+| `setVisible(id, visible)` | 显隐 |
+| `setColor(id, key, color)` | 改某条颜色 |
+| `setParams(id, params)` | 改计算参数 |
+| `reset()` | 恢复默认 |
+| `panelProps` | 给设置面板的 props 包 |
+| `mainLayers` | 主图 overlay Layer 节点 |
+| `paneCharts` | 副图 Chart 节点 |
+
+`panelProps`：
+
+| 字段 | 说明 |
+| --- | --- |
+| `groups` | 分组元数据（主图 / 副图 + 各指标 label、颜色键、参数字段） |
+| `settings` | 与上面同源的设置表 |
+| `setVisible` / `setColor` / `setParams` / `reset` | 同 hook 返回值 |
+
+挂载方式：
+
+```tsx
+<KeisenChart …>
+  <MainKlineChart>
+    <KlineCandles />
+    {indicator.mainLayers}
+  </MainKlineChart>
+  {indicator.paneCharts}
+</KeisenChart>
+```
+
+Vue 用 `VNodes` 展开：
+
+```vue
+<MainKlineChart>
+  <KlineCandles />
+  <VNodes :nodes="mainLayers" />
+</MainKlineChart>
+<VNodes :nodes="paneCharts" />
+```
+
+### 示例
+
+默认只开 MA + Volume + MACD。点工具栏「指标设置」弹出面板：勾选显隐、改子线颜色；均线类可用 × / + 增减子线。
+
+<SandpackDemo id="panes-indicator" files={runnablePanesIndicator} height={580} />

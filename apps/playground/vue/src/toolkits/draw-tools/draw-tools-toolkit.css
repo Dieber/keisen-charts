@@ -1,0 +1,82 @@
+.keisen-toolkit-draw-tools {
+  --keisen-draw-bg: #18181b;
+  --keisen-draw-fg: #f4f4f5;
+  --keisen-draw-muted: #a1a1aa;
+  --keisen-draw-border: #3f3f46;
+  --keisen-draw-accent: #3b82f6;
+  --keisen-draw-danger: #ef4444;
+  --keisen-draw-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 72px;
+  padding: 6px;
+  border: 1px solid var(--keisen-draw-border);
+  border-radius: var(--keisen-draw-radius);
+  background: var(--keisen-draw-bg);
+  color: var(--keisen-draw-fg);
+  box-sizing: border-box;
+}
+
+.mode-light .keisen-toolkit-draw-tools {
+  --keisen-draw-bg: #fff;
+  --keisen-draw-fg: #18181b;
+  --keisen-draw-muted: #71717a;
+  --keisen-draw-border: #d4d4d8;
+}
+
+.theme-neon .theme-chrome.mode-dark .keisen-toolkit-draw-tools {
+  --keisen-draw-bg: #160a24;
+  --keisen-draw-border: #4a2d6a;
+  --keisen-draw-accent: #7b2cbf;
+}
+
+.keisen-toolkit-draw-tools__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--keisen-draw-fg);
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.keisen-toolkit-draw-tools__btn:hover {
+  background: color-mix(in srgb, var(--keisen-draw-accent) 18%, transparent);
+}
+
+.keisen-toolkit-draw-tools__btn--active {
+  background: var(--keisen-draw-accent);
+  border-color: var(--keisen-draw-accent);
+  color: #fff;
+}
+
+.keisen-toolkit-draw-tools__btn--danger {
+  color: var(--keisen-draw-danger);
+}
+
+.keisen-toolkit-draw-tools__btn--danger:hover {
+  background: color-mix(in srgb, var(--keisen-draw-danger) 16%, transparent);
+}
+
+.keisen-toolkit-draw-tools__label {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.keisen-toolkit-draw-tools__divider {
+  height: 1px;
+  margin: 4px 2px;
+  background: var(--keisen-draw-border);
+}

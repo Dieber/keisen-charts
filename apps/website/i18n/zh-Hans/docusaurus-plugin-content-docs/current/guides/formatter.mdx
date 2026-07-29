@@ -1,0 +1,95 @@
+---
+sidebar_position: 7
+title: 自定义 Formatter
+description: priceFormat：minMove / precision / custom formatter，控制主图价格文案。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableFormatter} from '@site/src/examples/runnable/formatter';
+
+`priceFormat` 决定主图上**价格怎么写成文字**：Y 轴刻度、水平网格旁的价签、十字线价签、最新价、OHLC 面板、legend 等共用同一套规则。
+
+换品种时常要跟着改——BTC 可能 1 位小数，XRP 要 4 位，迷因币可能要 `0.0{9}532` 这种紧凑写法。对标 TradingView 的价格轴模型：用 `minMove` + `precision` 配大多数品种，极端展示再走 `type: "custom"`。
+
+:::tip
+零配置时库会按 tick step 自动选合理精度。品种精度差异大时（如 XRP 4 位），请显式传 `priceFormat`。
+:::
+
+## 三要素
+
+配价格格式时，抓住这三个旋钮（可只配其中一部分）：
+
+| 要素 | 是什么 | 干什么 |
+| --- | --- | --- |
+| `minMove` | 价格最小变动单位（tick size） | 约束刻度 step 与小数位下界。例如 `0.0001` 表示最小跳 4 位 |
+| `precision` | 展示用的小数位数 | 标签至少显示这么多位；**可省略**，由 `minMove` 与当前 tick step 共同推导 |
+| `formatter` | 自定义格式化函数 | 仅 `type: "custom"` 时使用，完全接管字符串；`minMove` 仍可用来对齐刻度 |
+
+关系简述：
+
+1. 展示位数 ≥ `minMove` 对应的小数位（`minMove=0.0001` → 至少 4 位）
+2. 刻度 step 会与 `minMove` 对齐（不小于它，并尽量为其整数倍）
+3. 一旦提供 `formatter`，标签文案以它为准（逃生舱：前缀货币符号、本地化、compact 等）
+
+## API
+
+### KeisenChart
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| `priceFormat` | `PriceFormat` | 主图价格格式；不传则用默认 `{ type: "price" }` |
+
+### PriceFormat
+
+联合类型，二选一：
+
+#### `type: "price"`（内置）
+
+| 字段 | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `type` | `"price"` | — | 使用内置算法 |
+| `minMove` | `number?` | — | tick size；省略则不强制小数位 / step 下界 |
+| `precision` | `number?` | — | 展示小数位；省略时由 minMove + step 推导 |
+| `compactTiny` | `boolean?` | `false` | 极小数是否写成 `0.0{n}xxx` |
+| `useGrouping` | `boolean?` | `true` | 大数是否加千分位（`1,234.56`） |
+
+#### `type: "custom"`
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `type` | `"custom"` | 完全自定义标签 |
+| `minMove` | `number?` | 仍影响刻度 step 对齐 |
+| `formatter` | `PriceFormatter` | `(value, ctx) => string` |
+
+### PriceFormatter / PriceFormatContext
+
+```ts
+type PriceFormatter = (value: number, ctx: PriceFormatContext) => string;
+```
+
+| `ctx` 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `kind` | `"tick" \| "value"` | `tick`：Y 轴刻度；`value`：十字线 / OHLC / legend 等 |
+| `step` | `number?` | 当前 nice tick step；主要在 `kind === "tick"` 时有意义 |
+| `domain` | `PriceDomain?` | 当前价格域，供高级自定义 |
+
+### 辅助函数
+
+| 函数 | 签名 | 说明 |
+| --- | --- | --- |
+| `createPriceFormatter` | `(format?: PriceFormat) => PriceFormatter` | 把配置变成统一函数；可在 custom 里复用内置逻辑 |
+| `formatCompactTiny` | `(value, options?) => string \| null` | 极小数 → `0.0{9}532`；不达阈值返回 `null` |
+| `formatPrice` | `(value, ctx, opts?) => string` | 内置 `type: "price"` 的实现入口 |
+
+`formatCompactTiny` 的 `options`：
+
+| 字段 | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `significantDigits` | `number?` | `4` | 有效数字位数 |
+| `minLeadingZeros` | `number?` | `4` | 触发 compact 的最少前导零个数 |
+
+## 示例
+
+切换普通精度与自定义（含 `$` 前缀 / compact 回退）：
+
+<SandpackDemo id="formatter" files={runnableFormatter} height={480} />

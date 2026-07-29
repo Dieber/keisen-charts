@@ -1,0 +1,68 @@
+---
+sidebar_position: 1
+title: Introduction
+description: Modern web candlestick chart components — what you write is what you get.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableIntro} from '@site/src/examples/runnable/intro';
+
+# Keisen
+
+🚧 A modern web candlestick chart library — under active development 🚧.
+
+**Keisen** comes from Japanese **罫線** (けいせん) — the traditional finance term for candlestick charts. We chose the name to bring professional charting to the modern web with familiar component APIs.
+
+## Features
+
+- 👀**What you write is what you get** — declare chart structure with JSX / templates; children are layers
+- 🖼️**Cross-framework** — one API surface for [React](https://github.com/Dieber/keisen-charts/tree/main/packages/react) and [Vue](https://github.com/Dieber/keisen-charts/tree/main/packages/vue)
+- 🎁**Ready out of the box** — pass K-line data and render; theme, resolution, indicators, and drawings compose as needed
+- 🎈**Lightweight** — zero dependencies, ~20kb gzipped
+- 🧩**Component-first** — if you know React / Vue, you know Keisen
+
+```tsx
+import { KeisenChart } from "@keisen-charts/react";
+
+export default function App() {
+  return (
+    <div style={{ width: "100%", height: 420 }}>
+      <KeisenChart data={data} mode="light" />
+    </div>
+  );
+}
+```
+
+<SandpackDemo id="intro" files={runnableIntro} height={460} />
+
+## Docs & links
+
+| | |
+| --- | --- |
+| Docs | [https://keisen.dev](https://keisen.dev) |
+| GitHub | [https://github.com/Dieber/keisen-charts](https://github.com/Dieber/keisen-charts) |
+| Quick Start | [Quick Start](./quick-start) |
+| npm (React) | [`@keisen-charts/react`](https://www.npmjs.com/package/@keisen-charts/react) |
+| npm (Vue) | [`@keisen-charts/vue`](https://www.npmjs.com/package/@keisen-charts/vue) |
+
+## Install
+
+```bash
+bun add @keisen-charts/react
+# or
+bun add @keisen-charts/vue
+```
+
+You can also use `npm` / `pnpm` / `yarn`. Peer deps are `react@^18 || ^19` or `vue@^3.5`.
+
+## Development
+
+### TODOs
+
+- [ ] Vanilla support
+- [ ] Overlay support
+- [ ] IANA support
+
+## License
+
+MIT

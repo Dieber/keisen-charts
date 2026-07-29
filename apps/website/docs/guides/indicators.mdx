@@ -1,0 +1,27 @@
+---
+sidebar_position: 9
+title: Indicators
+description: Built-in sub-pane indicators out of the box; register custom ones with registerIndicator.
+---
+
+import {FrameworkExample} from '@site/src/components/FrameworkExample';
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableIndicators} from '@site/src/examples/runnable/panes';
+import {indicatorBuiltinSnippet} from '@site/src/examples/indicators-snippet';
+
+Use common indicators and extend with your own algorithms — without touching core drawing classes.
+
+## Built-in usage
+
+<FrameworkExample
+  react={indicatorBuiltinSnippet.react}
+  vue={indicatorBuiltinSnippet.vue}
+/>
+
+## Custom indicators
+
+`registerIndicator` returns a mountable Chart component. Provide `calc` and `figures` (line / bar styles) in the descriptor.
+
+For dynamic main overlays and sub panes (visibility / params), see `useKlineIndicator` in [Main / sub panes](./panes.mdx).
+
+<SandpackDemo id="indicators" files={runnableIndicators} height={500} />

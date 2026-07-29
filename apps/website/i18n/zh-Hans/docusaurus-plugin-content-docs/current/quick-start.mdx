@@ -1,0 +1,60 @@
+---
+sidebar_position: 2
+title: 快速开始
+description: 安装 @keisen-charts/react 或 @keisen-charts/vue，几行代码出图。
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableQuickStart} from '@site/src/examples/runnable/quick-start';
+
+## 安装
+
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm" default>
+
+```bash
+npm install @keisen-charts/react
+# 或
+npm install @keisen-charts/vue
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add @keisen-charts/react
+# 或
+pnpm add @keisen-charts/vue
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @keisen-charts/react
+# 或
+yarn add @keisen-charts/vue
+```
+
+  </TabItem>
+  <TabItem value="bun" label="bun">
+
+```bash
+bun add @keisen-charts/react
+# 或
+bun add @keisen-charts/vue
+```
+
+  </TabItem>
+</Tabs>
+
+peer：`react@^18 || ^19` 或 `vue@^3.5`（随你选的包）。
+
+## 出图
+
+容器给足高度，把静态 `KlineBar[]` 传给 `data` 即可出图（实时接入见 [数据接入](./guides/data)）：
+
+<SandpackDemo id="quick-start" files={runnableQuickStart} height={460} />

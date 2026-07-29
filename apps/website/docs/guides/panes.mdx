@@ -1,0 +1,96 @@
+---
+sidebar_position: 8
+title: Main / sub panes
+description: Stack main chart, volume, MACD, etc. with Chart components; or assemble dynamically via indicator toolkit.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnablePanes,
+  runnablePanesIndicator,
+} from '@site/src/examples/runnable/panes';
+
+See price, volume, and indicators on one page. You declare Chart + Layer; Keisen lays out height and axes.
+
+## Shared structure
+
+```text
+KeisenChart
+  ├─ MainKlineChart → KlineCandles, MA, …
+  ├─ VolumeChart    → VOL, MAVOL, …
+  └─ MACDChart      → DIF, DEA, MACD
+```
+
+:::note
+Without `MainKlineChart`, a default main pane (candles only) is mounted automatically.
+:::
+
+Declarative composition by hand:
+
+<SandpackDemo id="panes" files={runnablePanes} height={540} />
+
+## Manage visibility & settings with the indicator toolkit
+
+Hand-writing every Chart / Layer tree gets verbose with many indicators. `useKlineIndicator` from `@keisen-charts/react/toolkit` (or `@keisen-charts/vue/toolkit`) keeps settings (visibility, colors, params) and composes:
+
+- `mainLayers` → into `MainKlineChart` (MA / EMA / BOLL…)
+- `paneCharts` → below the main pane (Volume / MACD / RSI…)
+- `panelProps` → feed a settings panel (show/hide / params / colors)
+
+Settings panel UI is **highly customizable** — the library does not ship a finished component. The example below pops a panel from a toolbar button (visibility / series colors / MA add-remove); copy and adapt to Popover / Drawer.
+
+### API: `useKlineIndicator(options?)`
+
+| `options` | Type | Description |
+| --- | --- | --- |
+| `defaults` | `Partial<Record<id, Partial<IndicatorSetting>>>` | Override built-in default visibility / colors / params |
+| `maPeriods` | `number[]?` | Default MA period list |
+| `extras` | `useKlineIndicatorExtra[]?` | Custom indicators (e.g. Bias) in composition |
+| `compose` | `boolean?` | Default `true`; `false` skips `mainLayers` / `paneCharts` (settings only) |
+
+| Return | Description |
+| --- | --- |
+| `settings` | Current indicator settings (`Ref` in Vue) |
+| `setVisible(id, visible)` | Show / hide |
+| `setColor(id, key, color)` | Change a series color |
+| `setParams(id, params)` | Change calc params |
+| `reset()` | Restore defaults |
+| `panelProps` | Props bundle for a settings panel |
+| `mainLayers` | Main overlay Layer nodes |
+| `paneCharts` | Sub-pane Chart nodes |
+
+`panelProps`:
+
+| Field | Description |
+| --- | --- |
+| `groups` | Group metadata (main / sub + labels, color keys, param fields) |
+| `settings` | Same settings table as above |
+| `setVisible` / `setColor` / `setParams` / `reset` | Same as hook returns |
+
+Mount pattern:
+
+```tsx
+<KeisenChart …>
+  <MainKlineChart>
+    <KlineCandles />
+    {indicator.mainLayers}
+  </MainKlineChart>
+  {indicator.paneCharts}
+</KeisenChart>
+```
+
+Vue expands with `VNodes`:
+
+```vue
+<MainKlineChart>
+  <KlineCandles />
+  <VNodes :nodes="mainLayers" />
+</MainKlineChart>
+<VNodes :nodes="paneCharts" />
+```
+
+### Example
+
+Defaults: MA + Volume + MACD only. Click toolbar “Indicator settings” for visibility, series colors; MA lines can be added/removed with × / +.
+
+<SandpackDemo id="panes-indicator" files={runnablePanesIndicator} height={580} />

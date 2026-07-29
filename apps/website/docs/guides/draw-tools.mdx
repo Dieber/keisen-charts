@@ -1,0 +1,107 @@
+---
+sidebar_position: 10
+title: Drawing tools
+description: Draw horizontal lines, rays, Fibonacci, and more on the main chart — by mouse or by code.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnableDrawByCode,
+  runnableDrawByTool,
+} from '@site/src/examples/runnable/draw-tools';
+
+Drawing tools overlay annotations on K-lines — support/resistance horizontals, trend rays, Fibonacci retracements. Shapes live on a chart pane (main pane `paneId` is `"main"`), anchors are draggable; the library handles hit-testing, redraw, and mutual exclusion with the crosshair.
+
+Two ways to use them:
+
+| Mode | How |
+| --- | --- |
+| **Tool drawing** | `setOverlay(tool id)` enters place mode; click the required points on the chart |
+| **Code drawing** | `addDrawing({ tool, paneId, points, style })` writes directly — good for scripts / backtest marks |
+
+Entry: `useDrawOverlay()` from `@keisen-charts/react/toolkit` or `@keisen-charts/vue/toolkit`. Must be called inside the `KeisenChart` subtree (e.g. `header`).
+
+## Built-in tools
+
+| id | Points | Description |
+| --- | --- | --- |
+| `horizontal` | 1 | Horizontal line (fixed price) |
+| `vertical` | 1 | Vertical line (fixed time / bar) |
+| `priceChannel` | 1 | Price channel (horizontal ray to the right) |
+| `ray` | 2 | Ray (two points set direction) |
+| `fibRetracement` | 2 | Fibonacci retracement |
+| `parallelLines` | 3 | Parallel lines |
+
+## API
+
+### `useDrawOverlay(options?)`
+
+| `options` | Type | Description |
+| --- | --- | --- |
+| `stickyTool` | `boolean?` | Keep current tool after drawing; default `false` (return to browse) |
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `activeTool` | `DrawingToolId \| null` (`Ref` in Vue) | Current place tool; `null` = browse (crosshair) |
+| `setOverlay` | `(tool: DrawingToolId \| null) => void` | Switch tool; `null` exits place mode |
+| `drawings` | `Drawing[]` | All current shapes |
+| `selectedIds` | `string[]` | Selected shape ids |
+| `stickyTool` / `setStickyTool` | `boolean` / setter | Sticky tool after draw |
+| `addDrawing` | see below | Programmatic create; returns id |
+| `updateDrawing` | `(id, patch) => void` | Patch style / points / visible etc. |
+| `removeDrawing` | `(id) => void` | Remove one |
+| `clearDrawings` | `(paneId?) => void` | Clear; optional pane filter |
+| `serialize` | `() => string` | Export JSON |
+| `hydrate` | `(json) => void` | Restore from JSON |
+| `toolbarProps` | `DrawToolsToolbarProps` | Feed a custom toolbar |
+
+### `addDrawing(drawing)`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `tool` | `DrawingToolId` | Tool type |
+| `paneId` | `string` | Main pane uses `"main"` |
+| `points` | `{ barIndex, value, time? }[]` | Anchors; library fills `time` from current kline when omitted |
+| `style` | `{ stroke, lineWidth, lineDash? }?` | Stroke; default blue |
+| `id` | `string?` | Optional; auto-generated if omitted |
+| `editable` / `locked` / `visible` | `boolean?` | Default: draggable, unlocked, visible |
+
+### `toolbarProps` / `DrawToolsToolbarProps`
+
+| Field | Description |
+| --- | --- |
+| `tools` | `DRAWING_TOOL_METAS` (id + en/zh labels) |
+| `activeTool` | Current tool |
+| `setOverlay` | Same as hook |
+| `clearDrawings` | Same as hook |
+
+Copy the docs toolbar example and adapt; no finished toolbar ships with the library.
+
+### Related types
+
+```ts
+type DrawingPoint = { barIndex: number; time: number; value: number };
+type DrawingStyle = { stroke: string; lineWidth: number; lineDash?: number[] };
+type Drawing = {
+  id: string;
+  tool: DrawingToolId;
+  paneId: string;
+  points: DrawingPoint[];
+  style: DrawingStyle;
+  editable?: boolean;
+  locked?: boolean;
+  visible?: boolean;
+};
+```
+
+## Example: draw by code
+
+Buttons call `addDrawing` — horizontal at last price, ray from mid to last:
+
+<SandpackDemo id="draw-by-code" files={runnableDrawByCode} height={500} />
+
+## Example: draw with tools
+
+Select a tool, then click on the chart (horizontal: 1 click, ray: 2, parallel: 3):
+
+<SandpackDemo id="draw-by-tool" files={runnableDrawByTool} height={500} />

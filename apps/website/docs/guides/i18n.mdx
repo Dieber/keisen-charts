@@ -1,0 +1,45 @@
+---
+sidebar_position: 5
+title: i18n
+description: Chart display locale for crosshair OHLC labels, interval units, etc. Built-in zh-CN / en-US.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableI18n} from '@site/src/examples/runnable/i18n';
+
+`locale` controls visible chart copy (crosshair open/high/low/close/volume, interval units, etc.). Built-in: `zh-CN`, `en-US`. Register custom languages with `registerLocale`, then switch.
+
+This is not an app-level i18n framework; host UI copy (toolbars, etc.) stays yours.
+
+## API
+
+### KeisenChart
+
+| Prop / event | Type | Description |
+| --- | --- | --- |
+| `locale` | `string` | locale id, default `zh-CN` |
+| `onLocaleChange` / Vue `locale-change` | `(localeId: string) => void` | Controlled callback |
+
+### useKlineLocale()
+
+Must be called inside the `KeisenChart` subtree (e.g. `header`).
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `locale` | `string` (`Ref<string>` in Vue) | Current locale id |
+| `setLocale` | `(localeId: string) => void` | Switch locale |
+| `messages` | `LocaleMessages` | Resolved message table (read-only) |
+
+### registerLocale
+
+```ts
+registerLocale(id: string, messages: Partial<LocaleMessages>): void
+```
+
+Missing keys fall back to `zh-CN`. Fields: `time` / `open` / `high` / `low` / `close` / `volume` / `second` / `minute` / `hour` / `day` / `week` / `month` / `year`.
+
+## Example
+
+Custom locale + `useKlineLocale` switching:
+
+<SandpackDemo id="i18n" files={runnableI18n} height={460} />

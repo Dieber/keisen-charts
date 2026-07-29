@@ -1,0 +1,129 @@
+---
+sidebar_position: 5
+title: API 参考
+description: @keisen-charts/react 与 @keisen-charts/vue 的用户面契约。类型以 packages/*/src 为准。
+---
+
+`@keisen-charts/react` 与 `@keisen-charts/vue` 的用户面契约。有疑问时以 `packages/*/src` 中的 TypeScript 类型为准。
+
+## 安装
+
+```bash
+bun add @keisen-charts/react   # 或 @keisen-charts/vue
+# peer: react@^18 || ^19 / vue@^3.5
+# 运行时依赖 @keisen-charts/core 会随包安装
+```
+
+## KeisenChart props
+
+共享的数据 / 外观 props（React props 与 Vue props）：
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| `data` | `KlineBar[]` | 受控静态 K 线 |
+| `getData` | `GetDataFn` | 按需拉历史 |
+| `onSubscribe` | `OnSubscribeFn` | 实时订阅；可返回 unsubscribe |
+| `resolution` | `Resolution` | 默认 `"1"` |
+| `symbol` | `string` | 品种 id |
+| `theme` | `ThemeInput` | preset id、完整定义或 token 覆盖 |
+| `mode` | `ThemeMode` | `"light"` \| `"dark"`（store 默认 `"dark"`） |
+| `upDown` | `UpDownScheme` | `"green-up"` \| `"red-up"`（store 默认 `"green-up"`） |
+| `timezone` | `KlineTimezone` | `"local"` \| `"UTC"` \| IANA（默认 `"local"`） |
+| `locale` | `string` | locale id，如 `"zh-CN"`（默认 `"zh-CN"`） |
+| `priceFormat` | `PriceFormat` | 主图价格文案（默认 `{ type: "price" }`） |
+| `showDataPanel` | `boolean` | 十字线信息面板，默认 `true` |
+
+布局：
+
+| React | Vue |
+| --- | --- |
+| `header?: ReactNode` | slot `header` |
+| `children?: ReactNode` | slot `default` |
+
+## 受控回调（React → Vue）
+
+| React prop | Vue emit | Payload |
+| --- | --- | --- |
+| `onResolutionChange` | `resolution-change` | `Resolution` |
+| `onThemeChange` | `theme-change` | `ThemeInput` |
+| `onModeChange` | `mode-change` | `ThemeMode` |
+| `onUpDownChange` | `up-down-change` | `UpDownScheme` |
+| `onTimezoneChange` | `timezone-change` | `KlineTimezone` |
+| `onLocaleChange` | `locale-change` | `string` |
+| `onPointerMove` | `pointer-move` | `ChartPointerInfo \| null` |
+| `onPointerDown` | `pointer-down` | `ChartPointerInfo` |
+| `onPointerUp` | `pointer-up` | `ChartPointerInfo` |
+| `onClick` | `click` | `ChartPointerInfo` |
+
+React 将变更 / 指针处理写成 props；Vue 对应为 emits（无 `on*` props）。
+
+## Hooks / Composables
+
+| 名称 | 用途 |
+| --- | --- |
+| `useKlineData` | 读 / 改当前 `ChartDataState`（`data`、`appendBars`、`replaceKline`、`prependBars` 等） |
+| `useKlineResolution` | 读/写 `resolution` |
+| `useKlineTheme` | `theme` / `mode` / `upDown` / 解析后的 `colors` |
+| `useKlineTimezone` | 时区 |
+| `useKlineLocale` | `locale` + `messages` |
+
+必须在 `KeisenChart` 子树内调用（如 header）。Vue 在对应位置返回 `Ref` / `ComputedRef`，React 返回普通值。
+
+## 类型速查
+
+```ts
+type KlineBar = { t: number; o: number; h: number; l: number; c: number; v: number }
+
+type Resolution = `${number}` | "1D" | "1W" | "1M"
+
+type GetDataFn = (params: {
+  resolution: Resolution
+  symbol?: string
+  countBack?: number
+  from?: number
+  to?: number
+}) => Promise<KlineBar[]>
+
+type OnSubscribeFn = (
+  params: { resolution: Resolution; symbol?: string },
+  emit: {
+    bar: (bar: KlineBar) => void
+    append: (bar: KlineBar) => void
+    updateLast: (bar: KlineBar) => void
+    replace: (bars: KlineBar[]) => void
+  },
+) => void | (() => void)
+
+type ThemeMode = "light" | "dark"
+type UpDownScheme = "green-up" | "red-up"
+type ThemeInput = string | ThemeDefinition | Partial<ThemeTokens>
+type KlineTimezone = "local" | "UTC" | (string & {})
+
+type PriceFormatter = (value: number, ctx: PriceFormatContext) => string
+type PriceFormat =
+  | {
+      type: "price"
+      minMove?: number
+      precision?: number
+      compactTiny?: boolean
+      useGrouping?: boolean
+    }
+  | { type: "custom"; minMove?: number; formatter: PriceFormatter }
+
+type ChartPointerInfo = {
+  chartId: string
+  x: number
+  y: number
+  timestamp: number
+  value: number
+  barIndex: number
+  pointerType?: string
+}
+```
+
+## 扩展入口
+
+- `registerTheme` / `registerLocale`
+- `registerIndicator` / `createIndicatorChart`
+- `createPriceFormatter` / `formatCompactTiny` / `formatPrice`
+- `@keisen-charts/react/toolkit` / `@keisen-charts/vue/toolkit`：`useKlineIndicator`、`useDrawOverlay`（设置面板 / 工具条 UI 见指南）

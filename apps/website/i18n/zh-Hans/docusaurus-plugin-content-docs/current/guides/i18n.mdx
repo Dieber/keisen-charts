@@ -1,0 +1,45 @@
+---
+sidebar_position: 5
+title: i18n 国际化
+description: 图表展示文案 locale：十字线 OHLC 标签、周期单位等。内置 zh-CN / en-US。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableI18n} from '@site/src/examples/runnable/i18n';
+
+`locale` 控制图表内可见文案（十字线面板的开高低收量、周期单位等）。内置 `zh-CN`、`en-US`；自定义语言用 `registerLocale` 注册后即可切换。
+
+这不是 App 级 i18n 框架；工具栏等宿主文案仍由你自己管。
+
+## API
+
+### KeisenChart
+
+| Prop / 事件 | 类型 | 说明 |
+| --- | --- | --- |
+| `locale` | `string` | locale id，默认 `zh-CN` |
+| `onLocaleChange` / Vue `locale-change` | `(localeId: string) => void` | 受控回调 |
+
+### useKlineLocale()
+
+须在 `KeisenChart` 子树内调用（如 `header`）。
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `locale` | `string`（Vue 为 `Ref<string>`） | 当前 locale id |
+| `setLocale` | `(localeId: string) => void` | 切换 locale |
+| `messages` | `LocaleMessages` | 当前已解析文案表（只读） |
+
+### registerLocale
+
+```ts
+registerLocale(id: string, messages: Partial<LocaleMessages>): void
+```
+
+`messages` 缺省 key 回落 `zh-CN`。字段：`time` / `open` / `high` / `low` / `close` / `volume` / `second` / `minute` / `hour` / `day` / `week` / `month` / `year`。
+
+## 示例
+
+自定义 locale + `useKlineLocale` 切换：
+
+<SandpackDemo id="i18n" files={runnableI18n} height={460} />

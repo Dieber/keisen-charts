@@ -1,0 +1,74 @@
+---
+sidebar_position: 3
+title: Controlled & uncontrolled
+description: Preferences like resolution, theme, timezone, and locale — pick one source of truth (SSOT).
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnableControlled,
+  runnableUncontrolled,
+} from '@site/src/examples/runnable/controlled';
+
+Charts have preference state: resolution, skin, light/dark, up-down colors, timezone, locale. Each can be driven in two ways — **pick one primary path**.
+
+## Concepts
+
+| | **Uncontrolled** | **Controlled** |
+| --- | --- | --- |
+| Source of truth (SSOT) | Chart-internal store | Host App state / ref |
+| How to change | In-chart `useKline*` `setXxx` | Update parent state, pass via props |
+| Host must hold value? | No | Yes — keep passing current value and handle callbacks |
+| Typical use | Toolbar only inside chart | Sync with URL / global settings / multi-chart / side UI |
+
+:::tip
+You can mix: e.g. controlled resolution, uncontrolled theme. Don’t treat **both sides as SSOT** for the same preference.
+:::
+
+## How to use
+
+### Uncontrolled
+
+1. Optionally set initial values on `KeisenChart` (`resolution="1"`, etc.)
+2. Call `useKlineResolution` (and friends) in `header` (or other chart subtree)
+3. Switch with returned `setXxx`; App should **not** also `useState` the same field, and **need not** wire `onXxxChange`
+
+### Controlled
+
+1. App holds current value with `useState` / `ref`
+2. Keep passing the matching prop (`resolution={resolution}`)
+3. Wire `onXxxChange` / Vue `@xxx-change` to write chart changes back to App
+4. Side UI mutates App state; in-chart header can still use hooks (`setXxx` fires the callback)
+
+## Dual-mode APIs
+
+| Preference | prop | React callback | Vue event | hook / composable |
+| --- | --- | --- | --- | --- |
+| Resolution | `resolution` | `onResolutionChange` | `resolution-change` | `useKlineResolution` → `setResolution` |
+| Skin | `theme` | `onThemeChange` | `theme-change` | `useKlineTheme` → `setTheme` |
+| Light/dark | `mode` | `onModeChange` | `mode-change` | `useKlineTheme` → `setMode` |
+| Up/down | `upDown` | `onUpDownChange` | `up-down-change` | `useKlineTheme` → `setUpDown` |
+| Timezone | `timezone` | `onTimezoneChange` | `timezone-change` | `useKlineTimezone` → `setTimezone` |
+| Locale | `locale` | `onLocaleChange` | `locale-change` | `useKlineLocale` → `setLocale` |
+
+`theme` / `mode` / `upDown` are orthogonal; each can be controlled or uncontrolled independently.
+
+**Prop-only (no matching hook)** — already owned by the host:
+
+| Prop | Description |
+| --- | --- |
+| `symbol` | Instrument held by host; change the prop |
+| `priceFormat` / `showDataPanel` | Config via props |
+| `data` / `getData` / `onSubscribe` | Data wiring, not display preferences |
+
+## Uncontrolled example
+
+App only passes initials; toolbar in `header` switches everything via hooks.
+
+<SandpackDemo id="uncontrolled" files={runnableUncontrolled} height={500} />
+
+## Controlled example
+
+App holds all preference state; external toolbar updates state, synced via props + onChange.
+
+<SandpackDemo id="controlled" files={runnableControlled} height={500} />

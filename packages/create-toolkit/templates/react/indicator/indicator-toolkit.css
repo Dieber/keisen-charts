@@ -1,0 +1,271 @@
+.keisen-toolkit-indicator {
+  --keisen-toolkit-bg: #18181b;
+  --keisen-toolkit-fg: #f4f4f5;
+  --keisen-toolkit-muted: #a1a1aa;
+  --keisen-toolkit-border: #3f3f46;
+  --keisen-toolkit-row-border: #27272a;
+  --keisen-toolkit-accent: #3b82f6;
+  --keisen-toolkit-radius: 10px;
+  --keisen-toolkit-shadow: 0 16px 40px rgb(0 0 0 / 35%);
+  --keisen-toolkit-input-bg: #09090b;
+  --keisen-toolkit-btn-ghost-bg: transparent;
+
+  display: flex;
+  flex-direction: column;
+  width: 520px;
+  max-width: min(520px, calc(100vw - 24px));
+  height: 540px;
+  max-height: min(540px, calc(100vh - 90px));
+  overflow: hidden;
+  border: 1px solid var(--keisen-toolkit-border);
+  border-radius: var(--keisen-toolkit-radius);
+  background: var(--keisen-toolkit-bg);
+  color: var(--keisen-toolkit-fg);
+  box-shadow: var(--keisen-toolkit-shadow);
+}
+
+.mode-light .keisen-toolkit-indicator {
+  --keisen-toolkit-bg: #fff;
+  --keisen-toolkit-fg: #18181b;
+  --keisen-toolkit-muted: #71717a;
+  --keisen-toolkit-border: #d4d4d8;
+  --keisen-toolkit-row-border: #e4e4e7;
+  --keisen-toolkit-shadow: 0 16px 40px rgb(0 0 0 / 16%);
+  --keisen-toolkit-input-bg: #f4f4f5;
+}
+
+.theme-neon .theme-chrome.mode-dark .keisen-toolkit-indicator {
+  --keisen-toolkit-bg: #160a24;
+  --keisen-toolkit-border: #4a2d6a;
+  --keisen-toolkit-row-border: #38204d;
+  --keisen-toolkit-input-bg: #0d0518;
+  --keisen-toolkit-accent: #7b2cbf;
+}
+
+.keisen-toolkit-indicator__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--keisen-toolkit-row-border);
+}
+
+.keisen-toolkit-indicator__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 4px 16px 12px;
+}
+
+.keisen-toolkit-indicator__footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--keisen-toolkit-row-border);
+}
+
+.keisen-toolkit-indicator__btn {
+  min-width: 72px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--keisen-toolkit-border);
+  border-radius: 6px;
+  background: var(--keisen-toolkit-btn-ghost-bg);
+  color: var(--keisen-toolkit-fg);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.keisen-toolkit-indicator__btn:hover {
+  border-color: var(--keisen-toolkit-accent);
+}
+
+.keisen-toolkit-indicator__btn--primary {
+  border-color: var(--keisen-toolkit-accent);
+  background: var(--keisen-toolkit-accent);
+  color: #fff;
+}
+
+.keisen-toolkit-indicator__section h3 {
+  margin: 12px 0 6px;
+  color: var(--keisen-toolkit-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.keisen-toolkit-indicator__row {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  min-height: 34px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--keisen-toolkit-row-border);
+}
+
+.keisen-toolkit-indicator__toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 25px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.keisen-toolkit-indicator__toggle input {
+  margin: 0;
+  accent-color: var(--keisen-toolkit-accent);
+}
+
+.keisen-toolkit-indicator__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.keisen-toolkit-indicator__param-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.keisen-toolkit-indicator__param-title {
+  color: var(--keisen-toolkit-muted);
+  font-size: 11px;
+}
+
+.keisen-toolkit-indicator__number-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.keisen-toolkit-indicator__number-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--keisen-toolkit-muted);
+  font-size: 11px;
+}
+
+.keisen-toolkit-indicator__number {
+  width: 64px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--keisen-toolkit-border);
+  border-radius: 5px;
+  background: var(--keisen-toolkit-input-bg);
+  color: var(--keisen-toolkit-fg);
+  font-size: 12px;
+}
+
+.keisen-toolkit-indicator__number:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.keisen-toolkit-indicator__period-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.keisen-toolkit-indicator__period-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.keisen-toolkit-indicator__colors {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px 12px;
+}
+
+.keisen-toolkit-indicator__color {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--keisen-toolkit-muted);
+  font-size: 11px;
+}
+
+.keisen-toolkit-indicator__color-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.keisen-toolkit-indicator__color-controls input[type="color"] {
+  width: 25px;
+  height: 25px;
+  padding: 2px;
+  border: 1px solid var(--keisen-toolkit-border);
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.keisen-toolkit-indicator__color-controls input[type="color"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.keisen-toolkit-indicator__hex {
+  width: 78px;
+  height: 25px;
+  padding: 0 6px;
+  border: 1px solid var(--keisen-toolkit-border);
+  border-radius: 5px;
+  background: var(--keisen-toolkit-input-bg);
+  color: var(--keisen-toolkit-fg);
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.keisen-toolkit-indicator__hex:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.keisen-toolkit-indicator__icon-btn,
+.keisen-toolkit-indicator__add-btn {
+  height: 28px;
+  border: 1px solid var(--keisen-toolkit-border);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--keisen-toolkit-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.keisen-toolkit-indicator__icon-btn {
+  width: 28px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.keisen-toolkit-indicator__add-btn {
+  align-self: flex-start;
+  padding: 0 10px;
+}
+
+.keisen-toolkit-indicator__icon-btn:hover:not(:disabled),
+.keisen-toolkit-indicator__add-btn:hover:not(:disabled) {
+  border-color: var(--keisen-toolkit-accent);
+  color: var(--keisen-toolkit-fg);
+}
+
+.keisen-toolkit-indicator__icon-btn:disabled,
+.keisen-toolkit-indicator__add-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

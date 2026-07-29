@@ -1,0 +1,27 @@
+---
+sidebar_position: 9
+title: 指标
+description: 内置副图指标开箱即用；自定义指标用 registerIndicator 注册后当 Chart 用。
+---
+
+import {FrameworkExample} from '@site/src/components/FrameworkExample';
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableIndicators} from '@site/src/examples/runnable/panes';
+import {indicatorBuiltinSnippet} from '@site/src/examples/indicators-snippet';
+
+既要常见指标，也要能扩展自有算法，而不去改 core 绘制类。
+
+## 内置用法
+
+<FrameworkExample
+  react={indicatorBuiltinSnippet.react}
+  vue={indicatorBuiltinSnippet.vue}
+/>
+
+## 自定义指标
+
+`registerIndicator` 返回可挂载的 Chart 组件。描述里提供 `calc` 与 `figures`（线 / 柱样式）。
+
+若要按设置动态组装主图叠加与副图（显隐 / 改参），见 [主图 / 副图](./panes.mdx) 中的 `useKlineIndicator`。
+
+<SandpackDemo id="indicators" files={runnableIndicators} height={500} />

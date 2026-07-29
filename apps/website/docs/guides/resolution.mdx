@@ -1,0 +1,17 @@
+---
+sidebar_position: 2
+title: Resolution & symbol
+description: resolution / symbol drive refetch; control via props or in-chart hooks.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableResolution} from '@site/src/examples/runnable/data';
+
+- `resolution`: default `"1"`; supports `"1" | "5" | … | "1D" | "1W" | "1M"`
+- `symbol`: instrument id passed through to getData / subscribe
+
+:::tip
+With static `data`, switching symbol / resolution usually needs a `key` remount or swapping the array yourself. The `getData` path is refreshed by DataController from its dependencies.
+:::
+
+<SandpackDemo id="resolution" files={runnableResolution} height={460} />

@@ -1,0 +1,32 @@
+---
+sidebar_position: 6
+title: Theme system
+description: Light/dark mode, custom theme registration, and up/down color polarity.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnableThemeCustom,
+  runnableThemeMode,
+  runnableThemeUpDown,
+} from '@site/src/examples/runnable/theme';
+
+Theme has three layers: `mode` (light/dark), `theme` (skin), `upDown` (up/down polarity). They are orthogonal and can be switched independently.
+
+## Light / dark mode
+
+`mode` is `"light"` | `"dark"`. You can also pass `Partial<ThemeTokens>`, shallow-merged onto the current mode’s default palette — useful for per-mode custom colors.
+
+<SandpackDemo id="theme-mode" files={runnableThemeMode} height={460} />
+
+## Custom themes
+
+Describe full `light` / `dark` palettes with `ThemeDefinition`, register via `registerTheme`, then reference with `theme="id"`; or pass `theme={ocean}` directly. Built-in: `default`; `neonTheme` must be registered first.
+
+<SandpackDemo id="theme-custom" files={runnableThemeCustom} height={460} />
+
+## Up / down colors
+
+`upDown` is `"green-up"` (green up / red down) or `"red-up"` (red up / green down). Skin tokens `up` / `down` are always authored as green-up; polarity is swapped at resolve time.
+
+<SandpackDemo id="theme-updown" files={runnableThemeUpDown} height={460} />

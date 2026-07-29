@@ -1,0 +1,41 @@
+{
+  "name": "@keisen-charts/react",
+  "version": "0.1.5",
+  "description": "Keisen candlestick chart for React",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./toolkit": "./src/toolkit/index.ts"
+  },
+  "dependencies": {
+    "@keisen-charts/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dieber/keisen-charts.git",
+    "directory": "packages/react"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "kline",
+    "candlestick",
+    "chart",
+    "react"
+  ]
+}

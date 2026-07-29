@@ -1,0 +1,26 @@
+{
+  "name": "keisen",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/playground/*",
+    "apps/website"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "dev:playground": "bun --hot apps/playground/react/src/index.ts",
+    "dev:playground:vue": "bun run --cwd apps/playground/vue dev",
+    "fetch:doc-klines": "bun scripts/fetch-doc-klines.ts",
+    "dev:doc": "bun run --cwd apps/website start",
+    "dev:doc:zh": "bun run --cwd apps/website start:zh",
+    "create-toolkit": "bun packages/create-toolkit/src/cli.ts",
+    "pack:vue": "bun scripts/pack-package.ts vue",
+    "pack:react": "bun scripts/pack-package.ts react",
+    "release:patch": "bun scripts/release-patch.ts"
+  }
+}

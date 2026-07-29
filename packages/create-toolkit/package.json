@@ -1,0 +1,30 @@
+{
+  "name": "@keisen-charts/create-toolkit",
+  "version": "0.1.0",
+  "description": "Scaffold Keisen toolkit templates (draw-tools, indicator) for React / Vue",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-toolkit": "./src/cli.ts"
+  },
+  "exports": {
+    ".": "./src/cli.ts"
+  },
+  "files": [
+    "src",
+    "templates"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dieber/keisen-charts.git",
+    "directory": "packages/create-toolkit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "keisen",
+    "toolkit",
+    "scaffold"
+  ]
+}

@@ -1,0 +1,18 @@
+---
+sidebar_position: 4
+title: 时区
+description: X 轴与十字线时间文案的展示时区；与 locale / upDown 正交。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableTimezone} from '@site/src/examples/runnable/data';
+
+K 线 `t` 始终是绝对时间。`timezone` 只影响轴标签、面板等如何格式化显示。
+
+- prop：`timezone`（`"UTC" | "local" | IANA`）
+- 受控回调：`onTimezoneChange` / Vue `timezone-change`
+- 图内：`useKlineTimezone`
+
+与 `locale` 正交：locale 管「中/英」等文案，timezone 管「按哪个时区读钟」。
+
+<SandpackDemo id="timezone" files={runnableTimezone} height={460} />

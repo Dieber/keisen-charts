@@ -1,0 +1,37 @@
+{
+  "name": "@keisen-charts/vue",
+  "version": "0.1.5",
+  "description": "Keisen candlestick chart for Vue",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./toolkit": "./src/toolkit/index.ts"
+  },
+  "dependencies": {
+    "@keisen-charts/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "vue": "^3.5.39"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dieber/keisen-charts.git",
+    "directory": "packages/vue"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "kline",
+    "candlestick",
+    "chart",
+    "vue"
+  ]
+}

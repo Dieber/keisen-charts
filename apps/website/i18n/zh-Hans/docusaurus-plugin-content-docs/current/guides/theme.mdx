@@ -1,0 +1,32 @@
+---
+sidebar_position: 6
+title: 主题系统
+description: 明暗模式、自定义主题注册、涨跌色极性。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {
+  runnableThemeCustom,
+  runnableThemeMode,
+  runnableThemeUpDown,
+} from '@site/src/examples/runnable/theme';
+
+主题由三层组成：`mode`（明暗）、`theme`（皮肤）、`upDown`（涨跌极性）。彼此正交，可单独切换。
+
+## 明暗模式
+
+`mode` 取 `"light"` | `"dark"`。也可传入 `Partial<ThemeTokens>`，浅合并到当前 mode 的默认色板上——用来做明暗各自的自定义配置。
+
+<SandpackDemo id="theme-mode" files={runnableThemeMode} height={460} />
+
+## 自定义主题
+
+用 `ThemeDefinition` 描述 `light` / `dark` 两套完整色板，`registerTheme` 注册后通过 `theme="id"` 引用；也可直接 `theme={ocean}`。内置 `default`；`neonTheme` 需先注册。
+
+<SandpackDemo id="theme-custom" files={runnableThemeCustom} height={460} />
+
+## 涨跌配置
+
+`upDown` 取 `"green-up"`（绿涨红跌）或 `"red-up"`（红涨绿跌）。皮肤 token 里的 `up` / `down` 始终按绿涨书写，极性在解析时交换。
+
+<SandpackDemo id="theme-updown" files={runnableThemeUpDown} height={460} />

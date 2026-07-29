@@ -1,0 +1,129 @@
+---
+sidebar_position: 5
+title: API Reference
+description: User-facing contract for @keisen-charts/react and @keisen-charts/vue. Types are defined in packages/*/src.
+---
+
+User-facing contract for `@keisen-charts/react` and `@keisen-charts/vue`. Prefer the TypeScript types in `packages/*/src` when in doubt.
+
+## Install
+
+```bash
+bun add @keisen-charts/react   # or @keisen-charts/vue
+# peer: react@^18 || ^19 / vue@^3.5
+# runtime dep @keisen-charts/core is installed with the package
+```
+
+## KeisenChart props
+
+Shared data / appearance props (React props and Vue props):
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `data` | `KlineBar[]` | Controlled static K-line series |
+| `getData` | `GetDataFn` | On-demand history fetch |
+| `onSubscribe` | `OnSubscribeFn` | Live subscription; may return unsubscribe |
+| `resolution` | `Resolution` | Default `"1"` |
+| `symbol` | `string` | Instrument id |
+| `theme` | `ThemeInput` | Preset id, full definition, or token overrides |
+| `mode` | `ThemeMode` | `"light"` \| `"dark"` (store default `"dark"`) |
+| `upDown` | `UpDownScheme` | `"green-up"` \| `"red-up"` (store default `"green-up"`) |
+| `timezone` | `KlineTimezone` | `"local"` \| `"UTC"` \| IANA string (default `"local"`) |
+| `locale` | `string` | Locale id, e.g. `"zh-CN"` (default `"zh-CN"`) |
+| `priceFormat` | `PriceFormat` | Main-chart price labels (default `{ type: "price" }`) |
+| `showDataPanel` | `boolean` | Crosshair info panel, default `true` |
+
+Layout:
+
+| React | Vue |
+| --- | --- |
+| `header?: ReactNode` | slot `header` |
+| `children?: ReactNode` | slot `default` |
+
+## Controlled callbacks (React → Vue)
+
+| React prop | Vue emit | Payload |
+| --- | --- | --- |
+| `onResolutionChange` | `resolution-change` | `Resolution` |
+| `onThemeChange` | `theme-change` | `ThemeInput` |
+| `onModeChange` | `mode-change` | `ThemeMode` |
+| `onUpDownChange` | `up-down-change` | `UpDownScheme` |
+| `onTimezoneChange` | `timezone-change` | `KlineTimezone` |
+| `onLocaleChange` | `locale-change` | `string` |
+| `onPointerMove` | `pointer-move` | `ChartPointerInfo \| null` |
+| `onPointerDown` | `pointer-down` | `ChartPointerInfo` |
+| `onPointerUp` | `pointer-up` | `ChartPointerInfo` |
+| `onClick` | `click` | `ChartPointerInfo` |
+
+React exposes change / pointer handlers as props. Vue exposes the same surface as emits (no `on*` props).
+
+## Hooks / Composables
+
+| Name | Purpose |
+| --- | --- |
+| `useKlineData` | Read / mutate current `ChartDataState` (`data`, `appendBars`, `replaceKline`, `prependBars`, …) |
+| `useKlineResolution` | Read/write `resolution` |
+| `useKlineTheme` | `theme` / `mode` / `upDown` / resolved `colors` |
+| `useKlineTimezone` | Timezone |
+| `useKlineLocale` | `locale` + `messages` |
+
+Must be called inside the `KeisenChart` subtree (e.g. header). Vue returns `Ref` / `ComputedRef` where React returns plain values.
+
+## Types cheat sheet
+
+```ts
+type KlineBar = { t: number; o: number; h: number; l: number; c: number; v: number }
+
+type Resolution = `${number}` | "1D" | "1W" | "1M"
+
+type GetDataFn = (params: {
+  resolution: Resolution
+  symbol?: string
+  countBack?: number
+  from?: number
+  to?: number
+}) => Promise<KlineBar[]>
+
+type OnSubscribeFn = (
+  params: { resolution: Resolution; symbol?: string },
+  emit: {
+    bar: (bar: KlineBar) => void
+    append: (bar: KlineBar) => void
+    updateLast: (bar: KlineBar) => void
+    replace: (bars: KlineBar[]) => void
+  },
+) => void | (() => void)
+
+type ThemeMode = "light" | "dark"
+type UpDownScheme = "green-up" | "red-up"
+type ThemeInput = string | ThemeDefinition | Partial<ThemeTokens>
+type KlineTimezone = "local" | "UTC" | (string & {})
+
+type PriceFormatter = (value: number, ctx: PriceFormatContext) => string
+type PriceFormat =
+  | {
+      type: "price"
+      minMove?: number
+      precision?: number
+      compactTiny?: boolean
+      useGrouping?: boolean
+    }
+  | { type: "custom"; minMove?: number; formatter: PriceFormatter }
+
+type ChartPointerInfo = {
+  chartId: string
+  x: number
+  y: number
+  timestamp: number
+  value: number
+  barIndex: number
+  pointerType?: string
+}
+```
+
+## Extension points
+
+- `registerTheme` / `registerLocale`
+- `registerIndicator` / `createIndicatorChart`
+- `createPriceFormatter` / `formatCompactTiny` / `formatPrice`
+- `@keisen-charts/react/toolkit` / `@keisen-charts/vue/toolkit`: `useKlineIndicator`, `useDrawOverlay` (see guides for settings / toolbar UI)

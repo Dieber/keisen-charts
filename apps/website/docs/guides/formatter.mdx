@@ -1,0 +1,95 @@
+---
+sidebar_position: 7
+title: Custom formatter
+description: priceFormat — minMove / precision / custom formatter for main-chart price labels.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableFormatter} from '@site/src/examples/runnable/formatter';
+
+`priceFormat` decides how prices become text on the main chart: Y-axis ticks, price tags beside horizontal grids, crosshair price, last price, OHLC panel, legend — all share one rule set.
+
+Switch instruments often need different formats — BTC maybe 1 decimal, XRP 4, meme coins maybe compact `0.0{9}532`. Modeled after TradingView’s price axis: use `minMove` + `precision` for most symbols; extreme display goes through `type: "custom"`.
+
+:::tip
+With zero config the library picks a sensible precision from tick step. When instruments differ a lot (e.g. XRP at 4 decimals), pass `priceFormat` explicitly.
+:::
+
+## Three knobs
+
+When configuring price format, these three controls matter (you can set only some):
+
+| Knob | What | Why |
+| --- | --- | --- |
+| `minMove` | Minimum price increment (tick size) | Bounds tick step and decimal floor. e.g. `0.0001` → at least 4 decimals |
+| `precision` | Display decimal places | Labels show at least this many; **optional**, derived from `minMove` + tick step |
+| `formatter` | Custom format function | Only for `type: "custom"`; fully owns the string; `minMove` still aligns ticks |
+
+In short:
+
+1. Display digits ≥ decimals implied by `minMove` (`minMove=0.0001` → at least 4)
+2. Tick step aligns with `minMove` (not smaller; preferably an integer multiple)
+3. Once `formatter` is provided, label text follows it (escape hatch: currency prefix, localization, compact, etc.)
+
+## API
+
+### KeisenChart
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `priceFormat` | `PriceFormat` | Main-chart price format; default `{ type: "price" }` |
+
+### PriceFormat
+
+Union type — pick one:
+
+#### `type: "price"` (built-in)
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `type` | `"price"` | — | Use built-in algorithm |
+| `minMove` | `number?` | — | tick size; omit to skip decimal / step floor |
+| `precision` | `number?` | — | Display decimals; omit → derived from minMove + step |
+| `compactTiny` | `boolean?` | `false` | Tiny values as `0.0{n}xxx` |
+| `useGrouping` | `boolean?` | `true` | Thousands separators (`1,234.56`) |
+
+#### `type: "custom"`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `type` | `"custom"` | Fully custom labels |
+| `minMove` | `number?` | Still affects tick step alignment |
+| `formatter` | `PriceFormatter` | `(value, ctx) => string` |
+
+### PriceFormatter / PriceFormatContext
+
+```ts
+type PriceFormatter = (value: number, ctx: PriceFormatContext) => string;
+```
+
+| `ctx` field | Type | Description |
+| --- | --- | --- |
+| `kind` | `"tick" \| "value"` | `tick`: Y-axis; `value`: crosshair / OHLC / legend etc. |
+| `step` | `number?` | Current nice tick step; mainly when `kind === "tick"` |
+| `domain` | `PriceDomain?` | Current price domain for advanced custom formatters |
+
+### Helpers
+
+| Function | Signature | Description |
+| --- | --- | --- |
+| `createPriceFormatter` | `(format?: PriceFormat) => PriceFormatter` | Turn config into one function; reuse built-in logic inside custom |
+| `formatCompactTiny` | `(value, options?) => string \| null` | Tiny → `0.0{9}532`; below threshold returns `null` |
+| `formatPrice` | `(value, ctx, opts?) => string` | Built-in `type: "price"` entry |
+
+`formatCompactTiny` options:
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `significantDigits` | `number?` | `4` | Significant digits |
+| `minLeadingZeros` | `number?` | `4` | Min leading zeros to trigger compact |
+
+## Example
+
+Toggle normal precision vs custom (`$` prefix / compact fallback):
+
+<SandpackDemo id="formatter" files={runnableFormatter} height={480} />

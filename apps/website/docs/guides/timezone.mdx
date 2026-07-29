@@ -1,0 +1,18 @@
+---
+sidebar_position: 4
+title: Timezone
+description: Display timezone for X-axis and crosshair time labels; orthogonal to locale / upDown.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableTimezone} from '@site/src/examples/runnable/data';
+
+K-line `t` is always absolute time. `timezone` only affects how axis labels, panels, etc. format for display.
+
+- prop: `timezone` (`"UTC" | "local" | IANA`)
+- controlled callback: `onTimezoneChange` / Vue `timezone-change`
+- in-chart: `useKlineTimezone`
+
+Orthogonal to `locale`: locale owns “zh/en” copy; timezone owns “which clock to read”.
+
+<SandpackDemo id="timezone" files={runnableTimezone} height={460} />

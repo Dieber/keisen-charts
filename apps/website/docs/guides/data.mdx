@@ -1,0 +1,109 @@
+---
+sidebar_position: 1
+title: Data
+description: Fetch history with getData, push live bars with onSubscribe, or pass static data.
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableData} from '@site/src/examples/runnable/data';
+
+Keisen handles caching, viewport, and redraws. Where K-lines come from is up to you — REST, WebSocket, or local JSON — as long as you hand in `KlineBar[]` under the contract below.
+
+Common pattern: `getData` for history, `onSubscribe` for live updates; offline demos can pass `data` directly.
+
+## API
+
+### KeisenChart
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `data` | `KlineBar[]` | Controlled static series; good for offline demos / precomputed arrays |
+| `getData` | `GetDataFn` | On-demand history: `(params) => Promise<KlineBar[]>` |
+| `onSubscribe` | `OnSubscribeFn` | Open a live subscription; push via `emit`; may return unsubscribe |
+| `symbol` | `string` | Instrument id, passed through to `getData` / `onSubscribe` |
+| `resolution` | `Resolution` | Interval, default `"1"` (minute number string, or `"1D"` / `"1W"` / `"1M"`) |
+
+Use either `data` or `getData`; add `onSubscribe` for live feeds.
+
+### KlineBar
+
+One candle:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `t` | `number` | Open time, **millisecond** Unix |
+| `o` / `h` / `l` / `c` | `number` | Open / high / low / close |
+| `v` | `number` | Volume |
+
+### getData(params)
+
+Called on first load, when resolution / symbol changes, and when scrolling left into history. Fetch from your API using `params` and return time-ascending `KlineBar[]`.
+
+| `params` field | Type | Description |
+| --- | --- | --- |
+| `resolution` | `Resolution` | Current interval |
+| `symbol` | `string?` | Current instrument (from prop) |
+| `from` | `number?` | Window start (ms) |
+| `to` | `number?` | Window end (ms) |
+| `countBack` | `number?` | Expected bar count (viewport estimate; use as limit) |
+
+```ts
+const getData: GetDataFn = async ({ symbol, resolution, from, to, countBack }) => {
+  return api.getKlines({ symbol, interval: resolution, from, to, limit: countBack });
+};
+```
+
+### onSubscribe(params, emit)
+
+Called when chart context is ready. Connect WS (or poll), push with `emit`; if you return a function, the library calls it on resolution change / unmount.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `params.resolution` | `Resolution` | Current interval |
+| `params.symbol` | `string?` | Current instrument |
+| `emit` | `SubscribeEmit` | Push entry point — see below |
+| return | `void \| (() => void)` | Optional unsubscribe (close WS / clear timer) |
+
+`emit` methods:
+
+| Method | Usage |
+| --- | --- |
+| `emit.bar(bar)` | **Recommended default**: route by `t` — same as last → update, greater → append, smaller → ignore |
+| `emit.updateLast(bar)` | Explicitly update the **last** bar (`t` must match last) |
+| `emit.append(bar)` | Explicitly append a **new** bar (`t` must be strictly greater than last) |
+| `emit.replace(bars)` | Replace the whole series |
+
+Most live sources (pushing “current candle”) only need `emit.bar`:
+
+```ts
+const onSubscribe: OnSubscribeFn = ({ symbol, resolution }, emit) => {
+  const ws = api.subscribe(symbol, resolution);
+  ws.on("candle", (bar) => emit.bar(bar));
+  return () => ws.close();
+};
+```
+
+If upstream already separates tick refresh vs new bar:
+
+```ts
+ws.on("tick", (bar) => emit.updateLast(bar));
+ws.on("bar", (bar) => emit.append(bar));
+```
+
+### useKlineData()
+
+Must be called inside the `KeisenChart` subtree. Prefer `getData` / `onSubscribe` for most cases; use this when UI needs to read/write the store directly.
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `data` | `ChartDataState` (`Ref` in Vue) | Current `{ kline, meta }` |
+| `setData` | `(patch) => void` | Shallow-merge into data / meta |
+| `replaceKline` | `(bars) => void` | Replace whole series |
+| `appendBars` | `(bars) => void` | Append bars one by one |
+| `prependBars` | `(bars) => void` | Prepend history (pagination) |
+
+## Example
+
+`getData` loads a preset snapshot + `onSubscribe` mock push:
+
+<SandpackDemo id="data" files={runnableData} height={440} />

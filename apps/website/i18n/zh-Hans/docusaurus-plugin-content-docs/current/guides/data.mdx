@@ -1,0 +1,109 @@
+---
+sidebar_position: 1
+title: 数据接入
+description: 用 getData 拉历史、用 onSubscribe 推实时；或直接传静态 data。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableData} from '@site/src/examples/runnable/data';
+
+Keisen 负责缓存、视口与重绘。K 线来自哪里由你决定——REST、WebSocket、本地 JSON 都可以，只要按下面的契约把 `KlineBar[]` 交进来。
+
+常见接法：`getData` 拉历史，`onSubscribe` 推实时；离线 demo 也可直接传 `data`。
+
+## API
+
+### KeisenChart
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| `data` | `KlineBar[]` | 受控静态序列；适合离线 demo / 已算好的数组 |
+| `getData` | `GetDataFn` | 按需拉历史：`(params) => Promise<KlineBar[]>` |
+| `onSubscribe` | `OnSubscribeFn` | 建立实时订阅；通过 `emit` 推送，可返回 unsubscribe |
+| `symbol` | `string` | 品种 id，原样传入 `getData` / `onSubscribe` |
+| `resolution` | `Resolution` | 周期，默认 `"1"`（分钟数字符串，或 `"1D"` / `"1W"` / `"1M"`） |
+
+`data` 与 `getData` 可二选一；实时场景再加 `onSubscribe`。
+
+### KlineBar
+
+一根 K 线：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `t` | `number` | 开盘时间，**毫秒** Unix |
+| `o` / `h` / `l` / `c` | `number` | 开 / 高 / 低 / 收 |
+| `v` | `number` | 成交量 |
+
+### getData(params)
+
+库在首屏加载、切周期 / 标的、以及向左滚到历史边界时调用。你按 `params` 去自己的接口取数，返回按时间升序的 `KlineBar[]`。
+
+| `params` 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `resolution` | `Resolution` | 当前周期 |
+| `symbol` | `string?` | 当前品种（来自 prop） |
+| `from` | `number?` | 时间窗起点（毫秒） |
+| `to` | `number?` | 时间窗终点（毫秒） |
+| `countBack` | `number?` | 期望条数（视口估算；接口可按 limit 用） |
+
+```ts
+const getData: GetDataFn = async ({ symbol, resolution, from, to, countBack }) => {
+  return api.getKlines({ symbol, interval: resolution, from, to, limit: countBack });
+};
+```
+
+### onSubscribe(params, emit)
+
+库在上下文就绪后调用。你在此连上 WS（或自建 poll），用 `emit` 写入图表；切周期 / 卸载时若返回了函数，库会调用它做清理。
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `params.resolution` | `Resolution` | 当前周期 |
+| `params.symbol` | `string?` | 当前品种 |
+| `emit` | `SubscribeEmit` | 推送入口，见下表 |
+| 返回值 | `void \| (() => void)` | 可选 unsubscribe（关 WS / 清 timer） |
+
+`emit` 方法：
+
+| 方法 | 用法 |
+| --- | --- |
+| `emit.bar(bar)` | **推荐默认**：按 `t` 自动分流——与最后一根相同则更新，更大则追加，更小则忽略 |
+| `emit.updateLast(bar)` | 显式更新**最后一根**（`t` 必须与最后一根相同） |
+| `emit.append(bar)` | 显式追加**新一根**（`t` 必须严格大于最后一根） |
+| `emit.replace(bars)` | 整表替换当前序列 |
+
+多数实时源（只推「当前这根 K 线」）用 `emit.bar` 即可，不必自己判断 update / append：
+
+```ts
+const onSubscribe: OnSubscribeFn = ({ symbol, resolution }, emit) => {
+  const ws = api.subscribe(symbol, resolution);
+  ws.on("candle", (bar) => emit.bar(bar));
+  return () => ws.close();
+};
+```
+
+若上游已经区分「tick 刷新」与「新开一根」，也可显式调用：
+
+```ts
+ws.on("tick", (bar) => emit.updateLast(bar));
+ws.on("bar", (bar) => emit.append(bar));
+```
+
+### useKlineData()
+
+须在 `KeisenChart` 子树内调用。多数场景用 `getData` / `onSubscribe` 即可；需要在 UI 里直接读写 store 时再用。
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `data` | `ChartDataState`（Vue 为 `Ref`） | 当前 `{ kline, meta }` |
+| `setData` | `(patch) => void` | 浅合并写入 data / meta |
+| `replaceKline` | `(bars) => void` | 整表替换 |
+| `appendBars` | `(bars) => void` | 逐根追加 |
+| `prependBars` | `(bars) => void` | 前置历史（分页加载） |
+
+## 示例
+
+`getData` 拉预置快照 + `onSubscribe` mock 推送：
+
+<SandpackDemo id="data" files={runnableData} height={440} />

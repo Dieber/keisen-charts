@@ -1,0 +1,17 @@
+---
+sidebar_position: 2
+title: 周期与标的
+description: resolution / symbol 驱动重新取数；可受控或由图内 hook 修改。
+---
+
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableResolution} from '@site/src/examples/runnable/data';
+
+- `resolution`：默认 `"1"`；支持 `"1" | "5" | … | "1D" | "1W" | "1M"`
+- `symbol`：透传给 getData / subscribe 的标的 id
+
+:::tip
+用静态 `data` 时，切换 symbol / resolution 建议加 `key` 强制换图，或自己换数组。`getData` 路径由 DataController 按依赖刷新。
+:::
+
+<SandpackDemo id="resolution" files={runnableResolution} height={460} />

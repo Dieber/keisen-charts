@@ -1,0 +1,60 @@
+---
+sidebar_position: 2
+title: Quick Start
+description: Install @keisen-charts/react or @keisen-charts/vue and render a chart in a few lines.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import {SandpackDemo} from '@site/src/components/SandpackDemo';
+import {runnableQuickStart} from '@site/src/examples/runnable/quick-start';
+
+## Install
+
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm" default>
+
+```bash
+npm install @keisen-charts/react
+# or
+npm install @keisen-charts/vue
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add @keisen-charts/react
+# or
+pnpm add @keisen-charts/vue
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @keisen-charts/react
+# or
+yarn add @keisen-charts/vue
+```
+
+  </TabItem>
+  <TabItem value="bun" label="bun">
+
+```bash
+bun add @keisen-charts/react
+# or
+bun add @keisen-charts/vue
+```
+
+  </TabItem>
+</Tabs>
+
+Peers: `react@^18 || ^19` or `vue@^3.5` (depending on the package you pick).
+
+## Render a chart
+
+Give the container enough height and pass a static `KlineBar[]` to `data` (for live feeds see [Data](./guides/data)):
+
+<SandpackDemo id="quick-start" files={runnableQuickStart} height={460} />

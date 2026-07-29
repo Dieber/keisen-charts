@@ -1,0 +1,59 @@
+# Keisen
+
+🚧现代Web K线组件库，正在开发中🚧。
+
+**Keisen** 之名来自日语 **罫線**（けいせん）—— 旧时日本金融语境中对 K 线图表的称呼。我们以此为名，希望用熟悉的组件写法，把专业图表能力带到现代 Web。
+
+## 特性
+
+- 👀 **所见即所得** — 用 JSX / 模板声明图表结构，子组件即图层，写什么画什么
+- 🖼️ **跨框架** — 同一套 API，支持 [React](https://github.com/Dieber/keisen-charts/tree/main/packages/react) 与 [Vue](https://github.com/Dieber/keisen-charts/tree/main/packages/vue)
+- 🎁 **开箱即用** — 传入 K 线数据即可出图；主题、周期、指标、画线等能力按需组合
+- 🎈 **非常轻量** — 无依赖，gzip包仅20kb。
+- 🧩 **组件化** — 会用 React / Vue 就会用 Keisen，把「学图表库」的成本降到最低
+
+```tsx
+import { KeisenChart } from "@keisen-charts/react";
+
+export default function App() {
+  return (
+    <div style={{ width: "100%", height: 420 }}>
+      <KeisenChart data={data} mode="light" />
+    </div>
+  );
+}
+```
+
+## 文档与链接
+
+| | |
+| --- | --- |
+| 文档 | [https://keisen.dev](https://keisen.dev) |
+| GitHub | [https://github.com/Dieber/keisen-charts](https://github.com/Dieber/keisen-charts) |
+| 快速开始 | [https://keisen.dev/docs/quick-start](https://keisen.dev/docs/quick-start) |
+| npm（React） | [`@keisen-charts/react`](https://www.npmjs.com/package/@keisen-charts/react) |
+| npm（Vue） | [`@keisen-charts/vue`](https://www.npmjs.com/package/@keisen-charts/vue) |
+
+## 安装
+
+```bash
+bun add @keisen-charts/react
+# 或
+bun add @keisen-charts/vue
+```
+
+也可用 `npm` / `pnpm` / `yarn`。peer 依赖分别为 `react@^18 || ^19` 或 `vue@^3.5`。
+
+## 开发
+
+### TODOS
+
+- [ ] Vanilla 版本支持
+- [ ] 覆盖物 支持
+- [ ] IANA 支持
+- [ ] 更多指标
+- [ ] 完善文档
+
+## License
+
+MIT
