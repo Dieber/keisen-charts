@@ -389,7 +389,6 @@ export const KeisenChart = ({
                       gridRow: placement.chartRow,
                       minWidth: 0,
                       minHeight: 0,
-                      borderTop: `1px solid ${resolvedTheme.axisTick}`,
                     }}
                   >
                     {chartNode}
@@ -400,7 +399,6 @@ export const KeisenChart = ({
                         gridColumn: 2,
                         gridRow: placement.yAxisRow,
                         minHeight: 0,
-                        borderTop: `1px solid ${resolvedTheme.axisTick}`,
                       }}
                     >
                       {yAxisNode}

@@ -22,6 +22,7 @@ import {
   crosshairStyleFromTheme,
   fillThemeBackground,
   gridStyleFromTheme,
+  strokeAxisTopEdge,
 } from "../../../theme/themeStyles";
 import { CrosshairLayer } from "../../shared/layers/CrosshairLayer";
 import { DataPanelLayer } from "../../shared/layers/DataPanelLayer";
@@ -422,6 +423,8 @@ export class GenericIndicatorView implements IView {
         ).draw(ctx, data);
       }
     }
+
+    strokeAxisTopEdge(ctx, data.theme, viewportWidth);
   }
 
   destroy(): void {

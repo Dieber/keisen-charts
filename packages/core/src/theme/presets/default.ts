@@ -6,7 +6,7 @@ export const defaultTheme: ThemeDefinition = {
   modes: {
     dark: {
       background: "transparent",
-      grid: "#bbbbbb",
+      grid: "#2a2e39",
       axisTick: "#787B86",
       axisText: "#D1D4DC",
       crosshair: "#758696",

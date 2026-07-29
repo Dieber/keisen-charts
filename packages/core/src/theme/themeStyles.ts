@@ -41,3 +41,20 @@ export const fillThemeBackground = (
   ctx.fillStyle = theme.background;
   ctx.fillRect(0, 0, width, height);
 };
+
+/** 副图 / X 轴顶部分隔线（颜色走 axisTick） */
+export const strokeAxisTopEdge = (
+  ctx: CanvasRenderingContext2D,
+  theme: ResolvedThemeTokens,
+  width: number,
+): void => {
+  if (width <= 0) return;
+  ctx.save();
+  ctx.strokeStyle = theme.axisTick;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(width, 0);
+  ctx.stroke();
+  ctx.restore();
+};

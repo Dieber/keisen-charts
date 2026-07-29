@@ -15,7 +15,10 @@ import {
   type PriceFormatter,
 } from "../../math/priceFormat";
 import { formatIndicatorTick } from "../../math/indicatorViewport";
-import { fillThemeBackground } from "../../theme/themeStyles";
+import {
+  fillThemeBackground,
+  strokeAxisTopEdge,
+} from "../../theme/themeStyles";
 import type { ChartDataState, YAxisLayerData } from "../../types/kline";
 import { CrosshairYAxisLabelLayer } from "./layers/CrosshairYAxisLabelLayer";
 import { LivePriceYAxisLabelLayer } from "./layers/LivePriceYAxisLabelLayer";
@@ -34,6 +37,8 @@ export type YAxisViewConfig = {
   showLivePrice?: boolean;
   /** 为 true 时从 store.config.priceFormat 读取（主图） */
   usePriceFormatConfig?: boolean;
+  /** 副图 Y 轴顶部分隔线 */
+  drawTopBorder?: boolean;
 };
 
 type YAxisViewLayer =
@@ -208,6 +213,9 @@ export class YAxisView implements IView {
         layer.draw(ctx, data);
       }
     }
+    if (this.config.drawTopBorder) {
+      strokeAxisTopEdge(ctx, data.theme, width);
+    }
   }
 
   destroy(): void {
@@ -246,4 +254,5 @@ export const createPaneYAxisConfig = (
   selectViewportHeight: (state) =>
     state.ui.panes[paneId]?.viewportHeight ?? 120,
   formatTick: options?.formatTick ?? formatIndicatorTick,
+  drawTopBorder: true,
 });

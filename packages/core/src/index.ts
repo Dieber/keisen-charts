@@ -473,6 +473,7 @@ export {
   crosshairStyleFromTheme,
   axisStyleFromTheme,
   fillThemeBackground,
+  strokeAxisTopEdge,
 } from './theme/themeStyles.ts';
 export type {
   ThemeMode,

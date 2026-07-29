@@ -39,6 +39,11 @@ export class KlineXAxisLayer
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
 
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(viewportWidth, 0);
+    ctx.stroke();
+
     for (const tick of ticks) {
       if (tick.barIndex === highlightedBarIndex) continue;
 
