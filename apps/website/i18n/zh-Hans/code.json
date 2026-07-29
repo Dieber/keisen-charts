@@ -8,6 +8,15 @@
   "landing.brand.github": {
     "message": "GitHub"
   },
+  "landing.brand.language": {
+    "message": "语言"
+  },
+  "landing.brand.locale.zhHans": {
+    "message": "简体中文"
+  },
+  "landing.brand.locale.en": {
+    "message": "英文"
+  },
   "landing.intro.label": {
     "message": "关于"
   },

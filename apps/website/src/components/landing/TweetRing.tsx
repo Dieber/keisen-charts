@@ -8,6 +8,8 @@ import styles from './TweetRing.module.css';
 const RADIUS = 5.1;
 const ROTATION_SPEED = 0.12;
 const _world = new Vector3();
+/** Marks the TweetRing DOM root; z-index sync must not walk past this. */
+const RING_ROOT_SELECTOR = '[data-tweet-ring]';
 
 function TweetCard({tweet}: {tweet: FakeTweet}) {
   return (
@@ -53,9 +55,20 @@ function TweetOnRing({
     const zIndex = Math.round(1 + t * 9999);
     shell.style.opacity = String(opacity);
     shell.style.zIndex = String(zIndex);
-    // Apply to Html wrappers only — stop before the canvas host
+
+    // Sync z-index onto drei Html wrappers so opacity under matrix3d stays crisp.
+    // Hard-stop at the canvas host / ring root — never walk to body.
+    const bound = shell.closest(RING_ROOT_SELECTOR);
     let el: HTMLElement | null = shell.parentElement;
-    while (el && !el.querySelector(':scope > canvas')) {
+    while (
+      el &&
+      el !== bound &&
+      el !== document.body &&
+      el !== document.documentElement
+    ) {
+      if (el.querySelector('canvas')) {
+        break;
+      }
       el.style.zIndex = String(zIndex);
       el = el.parentElement;
     }
@@ -115,7 +128,7 @@ function RotatingRing({tweets}: {tweets: FakeTweet[]}) {
 
 export default function TweetRing(): ReactNode {
   return (
-    <div className={styles.canvasWrap}>
+    <div className={styles.canvasWrap} data-tweet-ring>
       <Canvas
         camera={{position: [0, 0.9, 12], fov: 40}}
         dpr={[1, 1.75]}

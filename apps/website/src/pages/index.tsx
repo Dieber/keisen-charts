@@ -1,17 +1,68 @@
-import {type ReactNode} from 'react';
-import BrowserOnly from '@docusaurus/BrowserOnly';
-import Link from '@docusaurus/Link';
-import Translate, {translate} from '@docusaurus/Translate';
-import useBaseUrl from '@docusaurus/useBaseUrl';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Layout from '@theme/Layout';
+import { type ReactNode } from "react";
+import BrowserOnly from "@docusaurus/BrowserOnly";
+import Link from "@docusaurus/Link";
+import Translate, { translate } from "@docusaurus/Translate";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import Layout from "@theme/Layout";
 
-import styles from './index.module.css';
+import styles from "./index.module.css";
 
-const GITHUB_URL = 'https://github.com/Dieber/keisen-charts';
+const GITHUB_URL = "https://github.com/Dieber/keisen-charts";
+
+const LOCALE_OPTIONS = [
+  {
+    locale: "zh-Hans",
+    labelId: "landing.brand.locale.zhHans",
+    label: "Simplified Chinese",
+  },
+  {
+    locale: "en",
+    labelId: "landing.brand.locale.en",
+    label: "English",
+  },
+] as const;
+
+function BrandLangMenu(): ReactNode {
+  const {
+    i18n: { currentLocale, localeConfigs },
+  } = useDocusaurusContext();
+
+  return (
+    <div className={styles.langMenu}>
+      <button
+        type="button"
+        className={`${styles.brandLink} ${styles.langTrigger}`}
+      >
+        <Translate id="landing.brand.language">Language</Translate>
+      </button>
+      <ul className={styles.langList} role="list">
+        {LOCALE_OPTIONS.map(({ locale, labelId, label }) => {
+          const href = localeConfigs[locale]?.baseUrl ?? "/";
+          const isCurrent = currentLocale === locale;
+          return (
+            <li key={locale}>
+              <a
+                className={`${styles.brandLink} ${styles.langItem}${
+                  isCurrent ? ` ${styles.langItemActive}` : ""
+                }`}
+                href={href}
+                lang={localeConfigs[locale]?.htmlLang}
+                hrefLang={localeConfigs[locale]?.htmlLang}
+                aria-current={isCurrent ? "page" : undefined}
+              >
+                <Translate id={labelId}>{label}</Translate>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
 
 function BrandHero(): ReactNode {
-  const docsUrl = useBaseUrl('/docs/introduction');
+  const docsUrl = useBaseUrl("/docs/introduction");
   return (
     <header className={styles.brand}>
       <div className={styles.brandGrid} aria-hidden />
@@ -25,9 +76,11 @@ function BrandHero(): ReactNode {
             className={styles.brandLink}
             href={GITHUB_URL}
             target="_blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+          >
             <Translate id="landing.brand.github">GitHub</Translate>
           </a>
+          <BrandLangMenu />
         </nav>
       </div>
     </header>
@@ -96,13 +149,15 @@ function Features(): ReactNode {
         </li>
         <li className={styles.featureItem}>
           <h3 className={styles.featureTitle}>
-            <Translate id="landing.features.cross.title">Cross-runtime</Translate>
+            <Translate id="landing.features.cross.title">
+              Cross-runtime
+            </Translate>
           </h3>
           <p className={styles.featureBody}>
             <Translate id="landing.features.cross.body">
-              Heavy lifting lives in @keisen-charts/core. Framework bindings stay
-              thin. React and Vue ship today; more adapters can follow without
-              rewriting the engine.
+              Heavy lifting lives in @keisen-charts/core. Framework bindings
+              stay thin. React and Vue ship today; more adapters can follow
+              without rewriting the engine.
             </Translate>
           </p>
         </li>
@@ -134,10 +189,11 @@ function SocialProof(): ReactNode {
             <div className={styles.socialFallback}>
               <Translate id="landing.social.loading">loading…</Translate>
             </div>
-          }>
+          }
+        >
           {() => {
             const TweetRing =
-              require('@site/src/components/landing/TweetRing').default;
+              require("@site/src/components/landing/TweetRing").default;
             return <TweetRing />;
           }}
         </BrowserOnly>
@@ -147,8 +203,8 @@ function SocialProof(): ReactNode {
 }
 
 function LandingFooter(): ReactNode {
-  const docsUrl = useBaseUrl('/docs/introduction');
-  const quickStartUrl = useBaseUrl('/docs/quick-start');
+  const docsUrl = useBaseUrl("/docs/introduction");
+  const quickStartUrl = useBaseUrl("/docs/quick-start");
   return (
     <footer className={styles.footer}>
       <p className={styles.footerBrand}>keisen</p>
@@ -163,15 +219,17 @@ function LandingFooter(): ReactNode {
           className={styles.footerLink}
           href={GITHUB_URL}
           target="_blank"
-          rel="noopener noreferrer">
+          rel="noopener noreferrer"
+        >
           <Translate id="landing.footer.github">GitHub</Translate>
         </a>
       </nav>
       <p className={styles.footerCopy}>
         <Translate
           id="landing.footer.copy"
-          values={{year: new Date().getFullYear()}}>
-          {'Copyright © {year} Keisen · MIT'}
+          values={{ year: new Date().getFullYear() }}
+        >
+          {"Copyright © {year} Keisen · MIT"}
         </Translate>
       </p>
     </footer>
@@ -179,7 +237,7 @@ function LandingFooter(): ReactNode {
 }
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
 
   return (
     <Layout
@@ -187,10 +245,11 @@ export default function Home(): ReactNode {
       wrapperClassName="keisen-landing-wrap"
       title={siteConfig.title}
       description={translate({
-        id: 'landing.description',
+        id: "landing.description",
         message:
-          'Keisen — modern candlestick chart components for React and Vue',
-      })}>
+          "Keisen — modern candlestick chart components for React and Vue",
+      })}
+    >
       <div className={styles.page}>
         <BrandHero />
         <hr className={styles.divider} />
