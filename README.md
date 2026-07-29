@@ -28,9 +28,9 @@ export default function App() {
 
 | | |
 | --- | --- |
-| Docs | [https://keisen.dev](https://keisen.dev) |
+| Docs | [https://keisen-charts-website.vercel.app](https://keisen-charts-website.vercel.app) |
 | GitHub | [https://github.com/Dieber/keisen-charts](https://github.com/Dieber/keisen-charts) |
-| Quick start | [https://keisen.dev/docs/quick-start](https://keisen.dev/docs/quick-start) |
+| Quick start | [https://keisen-charts-website.vercel.app/docs/quick-start](https://keisen-charts-website.vercel.app/docs/quick-start) |
 | npm (React) | [`@keisen-charts/react`](https://www.npmjs.com/package/@keisen-charts/react) |
 | npm (Vue) | [`@keisen-charts/vue`](https://www.npmjs.com/package/@keisen-charts/vue) |
 
