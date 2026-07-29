@@ -1,5 +1,5 @@
 import type { IView } from "../base/IView";
-import type { Unsubscribe } from "../../store/Store";
+import { getPane, type Unsubscribe } from "../../store/Store";
 import type {
   KeisenState,
   PriceDomain,
@@ -249,10 +249,8 @@ export const createPaneYAxisConfig = (
 ): YAxisViewConfig => ({
   id: options?.id ?? `PaneYAxisView-${paneId}`,
   sourceViewId: paneId,
-  selectDomain: (state) =>
-    state.ui.panes[paneId]?.domain ?? { min: 0, max: 1 },
-  selectViewportHeight: (state) =>
-    state.ui.panes[paneId]?.viewportHeight ?? 120,
+  selectDomain: (state) => getPane(state.ui, paneId).domain,
+  selectViewportHeight: (state) => getPane(state.ui, paneId).viewportHeight,
   formatTick: options?.formatTick ?? formatIndicatorTick,
   drawTopBorder: true,
 });

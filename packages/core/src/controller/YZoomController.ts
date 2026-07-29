@@ -2,13 +2,14 @@ import type { EventBus } from "../event/EventBus";
 import type { ChartEvent } from "../event/types";
 import { zoomPriceDomain } from "../math/priceViewport";
 import type { ChartDataState } from "../types/kline";
-import type {
-  KeisenState,
-  PaneViewportState,
-  PriceDomain,
-  Store,
-  UiState,
-  Unsubscribe,
+import {
+  getPane,
+  type KeisenState,
+  type PaneViewportState,
+  type PriceDomain,
+  type Store,
+  type UiState,
+  type Unsubscribe,
 } from "../store/Store";
 
 /** 拖动距离相对视口高度的缩放灵敏度（越大越灵敏） */
@@ -38,8 +39,8 @@ export const createPaneYZoomConfig = (
   paneId: string,
 ): YZoomControllerConfig => ({
   viewId: `${paneId}-y-axis`,
-  getDomain: (ui) => ui.panes[paneId]?.domain ?? { min: 0, max: 1 },
-  getViewportHeight: (ui) => ui.panes[paneId]?.viewportHeight ?? 120,
+  getDomain: (ui) => getPane(ui, paneId).domain,
+  getViewportHeight: (ui) => getPane(ui, paneId).viewportHeight,
   applyDomain: (nextDomain) => ({
     panes: {
       [paneId]: {
