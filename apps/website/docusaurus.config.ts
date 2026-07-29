@@ -11,7 +11,7 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://keisen-charts-website.vercel.app',
+  url: 'https://keisen-charts.com',
   baseUrl: '/',
 
   organizationName: 'keisen',
