@@ -43,6 +43,10 @@ const config: Config = {
           routeBasePath: 'docs',
         },
         blog: false,
+        gtag: {
+          trackingID: 'G-8K3PJHWDL2',
+          anonymizeIP: true,
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
