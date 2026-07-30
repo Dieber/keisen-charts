@@ -3,7 +3,8 @@ import { resolutionToSeconds } from "@keisen-charts/react";
 
 export { resolutionToSeconds };
 
-export const resolutionToKtxTimeFrame = (resolution: Resolution): string => {
+/** Map chart resolution → Binance kline interval (e.g. `1` → `1m`, `1D` → `1d`). */
+export const resolutionToBinanceInterval = (resolution: Resolution): string => {
   if (resolution === "1D") return "1d";
   if (resolution === "1W") return "1w";
   if (resolution === "1M") return "1M";

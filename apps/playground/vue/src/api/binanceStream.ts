@@ -1,47 +1,57 @@
-import type { KlineBar, OnSubscribeFn } from "@keisen-charts/react";
+import type { KlineBar, OnSubscribeFn } from "@keisen-charts/vue";
 
-import { resolutionToKtxTimeFrame } from "./resolution";
+import { resolutionToBinanceInterval } from "./resolution";
 
-const MARKET = "lpc";
-const KTX_STREAM_URL = "wss://m-stream.ktx.com/";
+/** Binance spot combined-capable WS; live SUBSCRIBE / UNSUBSCRIBE on one socket. */
+const BINANCE_STREAM_URL = "wss://stream.binance.com:9443/ws";
 
-type KtxStreamMessage = {
-  stream?: string;
-  data?: {
-    e?: unknown[][];
+type BinanceKlinePayload = {
+  e?: string;
+  s?: string;
+  k?: {
+    t: number;
+    o: string;
+    h: string;
+    l: string;
+    c: string;
+    v: string;
+    i: string;
   };
 };
 
-type StreamHandler = (bars: KlineBar[]) => void;
+type StreamHandler = (bar: KlineBar) => void;
 
-const normalizeKtxBars = (rows: unknown[][]): KlineBar[] =>
-  rows
-    .map((row) => ({
-      t: Number(row[0]),
-      o: Number(row[1]),
-      h: Number(row[2]),
-      l: Number(row[3]),
-      c: Number(row[4]),
-      v: Number(row[5]),
-    }))
-    .filter((bar) => Number.isFinite(bar.t))
-    .sort((a, b) => a.t - b.t);
+const buildStreamName = (symbol: string, interval: string): string =>
+  `${symbol.toLowerCase()}@kline_${interval}`;
 
-const buildStreamName = (symbol: string, timeFrame: string): string =>
-  `${MARKET}.${symbol}.candles.${timeFrame}`;
+const barFromKline = (k: NonNullable<BinanceKlinePayload["k"]>): KlineBar => ({
+  t: k.t,
+  o: +k.o,
+  h: +k.h,
+  l: +k.l,
+  c: +k.c,
+  v: +k.v,
+});
 
 /**
- * Shared KTX WebSocket: one connection, many stream subscriptions.
+ * Shared Binance WebSocket: one connection, many kline subscriptions.
  * Period / symbol switches only SUBSCRIBE / UNSUBSCRIBE — never reopen the socket.
  */
-const createSharedKtxConnection = (url: string) => {
+const createSharedBinanceConnection = (url: string) => {
   let ws: WebSocket | null = null;
   let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  let nextId = 1;
   const handlersByStream = new Map<string, Set<StreamHandler>>();
 
   const send = (method: "SUBSCRIBE" | "UNSUBSCRIBE", stream: string) => {
     if (ws?.readyState !== WebSocket.OPEN) return;
-    ws.send(JSON.stringify({ method, params: [stream] }));
+    ws.send(
+      JSON.stringify({
+        method,
+        params: [stream],
+        id: nextId++,
+      }),
+    );
   };
 
   const ensureConnected = () => {
@@ -68,16 +78,19 @@ const createSharedKtxConnection = (url: string) => {
 
     ws.onmessage = (event) => {
       try {
-        const message = JSON.parse(String(event.data)) as KtxStreamMessage;
-        const stream = message.stream;
-        if (!stream || !message.data?.e) return;
+        const message = JSON.parse(
+          String(event.data),
+        ) as BinanceKlinePayload;
+        // Ignore SUBSCRIBE/UNSUBSCRIBE acks (`{ result, id }`)
+        if (message.e !== "kline" || !message.k || !message.s) return;
 
+        const stream = buildStreamName(message.s, message.k.i);
         const handlers = handlersByStream.get(stream);
         if (!handlers?.size) return;
 
-        const bars = normalizeKtxBars(message.data.e);
+        const bar = barFromKline(message.k);
         for (const handler of handlers) {
-          handler([bars[bars.length - 1]!]);
+          handler(bar);
         }
       } catch {
         // ignore malformed messages
@@ -86,7 +99,6 @@ const createSharedKtxConnection = (url: string) => {
 
     ws.onclose = () => {
       ws = null;
-      // Reconnect if any subscription is still active.
       if (handlersByStream.size === 0) return;
       reconnectTimer = setTimeout(() => {
         reconnectTimer = null;
@@ -125,17 +137,18 @@ const createSharedKtxConnection = (url: string) => {
   return { subscribe };
 };
 
-const sharedConnection = createSharedKtxConnection(KTX_STREAM_URL);
+const sharedConnection = createSharedBinanceConnection(BINANCE_STREAM_URL);
 
-export const ktxOnSubscribe: OnSubscribeFn = ({ resolution, symbol }, emit) => {
+export const binanceOnSubscribe: OnSubscribeFn = (
+  { resolution, symbol },
+  emit,
+) => {
   if (!symbol) return;
 
-  const timeFrame = resolutionToKtxTimeFrame(resolution);
-  const streamName = buildStreamName(symbol, timeFrame);
+  const interval = resolutionToBinanceInterval(resolution);
+  const streamName = buildStreamName(symbol, interval);
 
-  return sharedConnection.subscribe(streamName, (bars) => {
-    for (const bar of bars) {
-      emit.bar(bar);
-    }
+  return sharedConnection.subscribe(streamName, (bar) => {
+    emit.bar(bar);
   });
 };

@@ -7,8 +7,8 @@ import {
 } from "@keisen-charts/vue";
 
 export const SYMBOL_OPTIONS = [
-  { label: "XRP", value: "XRP_USDT_SWAP" },
-  { label: "BTC", value: "BTC_USDT_SWAP" },
+  { label: "XRP", value: "XRPUSDT" },
+  { label: "BTC", value: "BTCUSDT" },
 ] as const;
 
 export type SymbolId = (typeof SYMBOL_OPTIONS)[number]["value"];
@@ -16,13 +16,13 @@ export type SymbolId = (typeof SYMBOL_OPTIONS)[number]["value"];
 export type ThemeId = "default" | "neon";
 
 export const SYMBOL_PRICE_FORMAT: Record<SymbolId, PriceFormat> = {
-  XRP_USDT_SWAP: {
+  XRPUSDT: {
     type: "price",
     minMove: 0.0001,
     precision: 4,
     useGrouping: false,
   },
-  BTC_USDT_SWAP: {
+  BTCUSDT: {
     type: "price",
     minMove: 0.1,
     precision: 1,

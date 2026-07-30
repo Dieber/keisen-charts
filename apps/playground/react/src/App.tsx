@@ -14,8 +14,8 @@ import {
 import type { PriceFormat, Resolution } from "@keisen-charts/react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
-import { ktxGetData } from "./api/ktxCandles";
-import { ktxOnSubscribe } from "./api/ktxStream";
+import { binanceGetData } from "./api/binanceCandles";
+import { binanceOnSubscribe } from "./api/binanceStream";
 import {
   IndicatorSettingsPanel,
   useKlineIndicator,
@@ -24,20 +24,20 @@ import {
 import { DrawToolsToolbar, useDrawOverlay } from "./toolkits/draw-tools";
 
 const SYMBOL_OPTIONS = [
-  { label: "XRP", value: "XRP_USDT_SWAP" },
-  { label: "BTC", value: "BTC_USDT_SWAP" },
+  { label: "XRP", value: "XRPUSDT" },
+  { label: "BTC", value: "BTCUSDT" },
 ] as const;
 
 type SymbolId = (typeof SYMBOL_OPTIONS)[number]["value"];
 
 const SYMBOL_PRICE_FORMAT: Record<SymbolId, PriceFormat> = {
-  XRP_USDT_SWAP: {
+  XRPUSDT: {
     type: "price",
     minMove: 0.0001,
     precision: 4,
     useGrouping: false,
   },
-  BTC_USDT_SWAP: {
+  BTCUSDT: {
     type: "price",
     minMove: 0.1,
     precision: 1,
@@ -327,7 +327,7 @@ function ChartToolbar({
 }
 
 export function App() {
-  const [symbol, setSymbol] = useState<SymbolId>("XRP_USDT_SWAP");
+  const [symbol, setSymbol] = useState<SymbolId>("XRPUSDT");
   const [compactDemo, setCompactDemo] = useState(false);
   const [drawToolsOpen, setDrawToolsOpen] = useState(true);
   const [pointerHud, setPointerHud] = useState<string>("pointer: —");
@@ -385,8 +385,8 @@ export function App() {
       <KeisenChart
         symbol={symbol}
         resolution={"1"}
-        getData={ktxGetData}
-        onSubscribe={ktxOnSubscribe}
+        getData={binanceGetData}
+        onSubscribe={binanceOnSubscribe}
         priceFormat={priceFormat}
         onPointerMove={(info) => setPointerHud(formatPointerHud(info))}
         onClick={(info) => {

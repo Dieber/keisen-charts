@@ -9,8 +9,8 @@ import {
 import { useKlineIndicator } from "@keisen-charts/vue/toolkit";
 import { computed, ref } from "vue";
 
-import { ktxGetData } from "./api/ktxCandles";
-import { ktxOnSubscribe } from "./api/ktxStream";
+import { binanceGetData } from "./api/binanceCandles";
+import { binanceOnSubscribe } from "./api/binanceStream";
 import ChartToolbar from "./components/ChartToolbar.vue";
 import { createBiasChart } from "./demo/biasIndicator";
 import {
@@ -19,7 +19,7 @@ import {
   type SymbolId,
 } from "./demo/constants";
 
-const symbol = ref<SymbolId>("XRP_USDT_SWAP");
+const symbol = ref<SymbolId>("XRPUSDT");
 const compactDemo = ref(false);
 const drawToolsOpen = ref(true);
 const pointerHud = ref("pointer: —");
@@ -82,8 +82,8 @@ const { panelProps, mainLayers, paneCharts } = useKlineIndicator({
     <div class="pointer-hud">{{ pointerHud }}</div>
     <KeisenChart
       :symbol="symbol"
-      :get-data="ktxGetData"
-      :on-subscribe="ktxOnSubscribe"
+      :get-data="binanceGetData"
+      :on-subscribe="binanceOnSubscribe"
       :price-format="priceFormat"
       @pointer-move="onPointerMove"
       @click="onChartClick"

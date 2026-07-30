@@ -130,7 +130,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/keisen/keisen',
+          href: 'https://github.com/Dieber/keisen-charts',
           label: 'GitHub',
           position: 'right',
         },
@@ -152,7 +152,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/keisen/keisen',
+              href: 'https://github.com/Dieber/keisen-charts',
             },
           ],
         },

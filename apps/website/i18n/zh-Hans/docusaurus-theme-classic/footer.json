@@ -21,7 +21,7 @@
   },
   "link.item.label.GitHub": {
     "message": "GitHub",
-    "description": "The label of footer link with label=GitHub linking to https://github.com/keisen/keisen"
+    "description": "The label of footer link with label=GitHub linking to https://github.com/Dieber/keisen-charts"
   },
   "copyright": {
     "message": "Copyright © 2026 Keisen.",

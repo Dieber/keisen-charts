@@ -1,8 +1,7 @@
-import { serve, type Server } from 'bun';
+import { serve } from 'bun';
 import index from './index.html';
 
-const KTX_API_ORIGIN = 'https://api.ktx.com';
-// const KTX_API_ORIGIN = 'https://tapi.ktx.one';
+const BINANCE_API_ORIGIN = 'https://api.binance.com';
 
 const STRIP_RESPONSE_HEADERS = [
   'content-encoding',
@@ -10,11 +9,11 @@ const STRIP_RESPONSE_HEADERS = [
   'transfer-encoding',
 ] as const;
 
-/** 开发态把 `/api/ktx/*` 代理到 KTX REST，避免浏览器直连跨域 */
-async function proxyKtxApi(req: Request) {
+/** 开发态把 `/api/binance/*` 代理到 Binance REST，避免浏览器直连跨域 */
+async function proxyBinanceApi(req: Request) {
   const url = new URL(req.url);
-  const path = url.pathname.slice('/api/ktx'.length);
-  const targetUrl = `${KTX_API_ORIGIN}/api${path}${url.search}`;
+  const path = url.pathname.slice('/api/binance'.length);
+  const targetUrl = `${BINANCE_API_ORIGIN}/api${path}${url.search}`;
 
   const response = await fetch(targetUrl, {
     method: req.method,
@@ -40,7 +39,7 @@ async function proxyKtxApi(req: Request) {
 
 const server = serve({
   routes: {
-    '/api/ktx/*': proxyKtxApi,
+    '/api/binance/*': proxyBinanceApi,
     '/*': index,
   },
 

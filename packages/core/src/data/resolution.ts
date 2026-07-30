@@ -21,7 +21,6 @@ export const resolutionToSeconds = (resolution: Resolution): number => {
 export const resolutionToMs = (resolution: Resolution): number =>
   resolutionToSeconds(resolution) * 1000;
 
-/** KTX time_frame */
 export const resolutionToTimeFrame = (resolution: Resolution): string => {
   if (resolution === "1D") return "1d";
   if (resolution === "1W") return "1w";
