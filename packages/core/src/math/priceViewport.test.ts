@@ -31,6 +31,18 @@ describe("priceViewport", () => {
     expect(domain.max).toBeCloseTo(21.5, 6);
   });
 
+  test("computeAutoPriceDomain includes overlay indicator extremes", () => {
+    const domain = computeAutoPriceDomain(
+      [{ t: 1, o: 10, h: 20, l: 5, c: 15, v: 1 }],
+      0.1,
+      [25, 2, null, undefined, Number.NaN],
+    );
+
+    // raw min/max = 2..25, range = 23, pad = 2.3
+    expect(domain.min).toBeCloseTo(-0.3, 6);
+    expect(domain.max).toBeCloseTo(27.3, 6);
+  });
+
   test("panPriceDomain shifts min and max together", () => {
     const next = panPriceDomain({ min: 10, max: 20 }, 5);
     expect(next).toEqual({ min: 15, max: 25 });

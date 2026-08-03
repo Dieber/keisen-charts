@@ -2,8 +2,9 @@ import type { ILayer } from "../../../base/ILayer";
 import { computeEMA } from "../../../../indicators/indicators";
 import type { LegendItem } from "../../../shared/legend";
 import { formatLegendValue } from "../../../shared/legend";
-import type { KlineLayerData } from "../../../../types/kline";
+import type { KlineBar, KlineLayerData } from "../../../../types/kline";
 import { drawSeriesLine } from "./drawSeriesLine";
+import { collectSeriesVisiblePrices } from "./visiblePriceExtent";
 
 const DEFAULT_COLOR = "#E91E63";
 
@@ -41,6 +42,19 @@ export class EMALayer implements ILayer<CanvasRenderingContext2D, KlineLayerData
         },
       ],
     };
+  }
+
+  collectVisiblePrices(
+    kline: KlineBar[],
+    startBar: number,
+    endBar: number,
+  ): (number | null)[] {
+    if (kline.length === 0 || this.period <= 0) return [];
+    return collectSeriesVisiblePrices(
+      computeEMA(kline, this.period),
+      startBar,
+      endBar,
+    );
   }
 
   draw(ctx: CanvasRenderingContext2D, data: KlineLayerData): void {

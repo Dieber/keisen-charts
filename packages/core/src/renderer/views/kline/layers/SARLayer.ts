@@ -4,7 +4,8 @@ import { priceToY } from "../../../../math/priceViewport";
 import { indexToX } from "../../../../math/viewport";
 import type { LegendItem } from "../../../shared/legend";
 import { formatLegendValue } from "../../../shared/legend";
-import type { KlineLayerData } from "../../../../types/kline";
+import type { KlineBar, KlineLayerData } from "../../../../types/kline";
+import { collectSeriesVisiblePrices } from "./visiblePriceExtent";
 
 const DEFAULT_COLOR = "#FFEB3B";
 const DOT_RADIUS = 2;
@@ -51,6 +52,19 @@ export class SARLayer implements ILayer<CanvasRenderingContext2D, KlineLayerData
         },
       ],
     };
+  }
+
+  collectVisiblePrices(
+    kline: KlineBar[],
+    startBar: number,
+    endBar: number,
+  ): (number | null)[] {
+    if (kline.length === 0) return [];
+    return collectSeriesVisiblePrices(
+      computeSAR(kline, this.start, this.step, this.max),
+      startBar,
+      endBar,
+    );
   }
 
   draw(ctx: CanvasRenderingContext2D, data: KlineLayerData): void {

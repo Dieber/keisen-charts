@@ -37,14 +37,15 @@ import { LivePriceLayer } from "./layers/LivePriceLayer";
 import { MALayer } from "./layers/MALayer";
 import { SARLayer } from "./layers/SARLayer";
 import { SMMALayer } from "./layers/SMMALayer";
+import { isVisiblePriceContributor } from "./layers/visiblePriceExtent";
 
-const getVisibleBars = (
+const getVisibleBarRange = (
   kline: ChartDataState["kline"],
   indexDomain: KeisenState<ChartDataState>["ui"]["indexDomain"],
 ) => {
   const startBar = Math.max(0, Math.floor(indexDomain.start));
   const endBar = Math.min(kline.length - 1, Math.ceil(indexDomain.end));
-  return kline.slice(startBar, endBar + 1);
+  return { startBar, endBar };
 };
 
 type MainKlineLayer =
@@ -93,13 +94,20 @@ export class MainKlineView implements IView {
 
   addLayer(layer: MainKlineLayer): void {
     this.layers.push(layer);
+    if (isVisiblePriceContributor(layer)) {
+      this.syncAutoPriceDomain();
+    }
     this.requestRender();
   }
 
   removeLayer(layerId: string): void {
     const prevLength = this.layers.length;
+    const removed = this.layers.find((layer) => layer.id === layerId);
     this.layers = this.layers.filter((layer) => layer.id !== layerId);
     if (this.layers.length !== prevLength) {
+      if (isVisiblePriceContributor(removed)) {
+        this.syncAutoPriceDomain();
+      }
       this.requestRender();
     }
   }
@@ -126,14 +134,32 @@ export class MainKlineView implements IView {
     }));
   }
 
+  private collectOverlayVisiblePrices(
+    kline: ChartDataState["kline"],
+    startBar: number,
+    endBar: number,
+  ): (number | null | undefined)[] {
+    const values: (number | null | undefined)[] = [];
+    for (const layer of this.layers) {
+      if (!isVisiblePriceContributor(layer)) continue;
+      for (const value of layer.collectVisiblePrices(kline, startBar, endBar)) {
+        values.push(value);
+      }
+    }
+    return values;
+  }
+
   private syncAutoPriceDomain(): void {
     const { data, ui, config } = this.store.getState();
     if (ui.yAxisMode !== "auto") return;
 
-    const visibleBars = getVisibleBars(data.kline, ui.indexDomain);
+    const { startBar, endBar } = getVisibleBarRange(data.kline, ui.indexDomain);
+    const visibleBars =
+      startBar <= endBar ? data.kline.slice(startBar, endBar + 1) : [];
     const nextDomain = computeAutoPriceDomain(
       visibleBars,
       config.verticalPaddingRatio,
+      this.collectOverlayVisiblePrices(data.kline, startBar, endBar),
     );
 
     const { min, max } = ui.priceDomain;

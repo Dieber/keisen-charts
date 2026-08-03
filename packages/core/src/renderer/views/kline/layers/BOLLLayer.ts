@@ -2,8 +2,9 @@ import type { ILayer } from "../../../base/ILayer";
 import { computeBOLL } from "../../../../indicators/indicators";
 import type { LegendItem } from "../../../shared/legend";
 import { formatLegendValue } from "../../../shared/legend";
-import type { KlineLayerData } from "../../../../types/kline";
+import type { KlineBar, KlineLayerData } from "../../../../types/kline";
 import { drawSeriesLine } from "./drawSeriesLine";
+import { collectSeriesVisiblePrices } from "./visiblePriceExtent";
 
 const DEFAULT_COLORS = {
   upper: "#FF5722",
@@ -71,6 +72,24 @@ export class BOLLLayer implements ILayer<CanvasRenderingContext2D, KlineLayerDat
         },
       ],
     };
+  }
+
+  collectVisiblePrices(
+    kline: KlineBar[],
+    startBar: number,
+    endBar: number,
+  ): (number | null)[] {
+    if (kline.length === 0 || this.period <= 0 || this.stdDev <= 0) return [];
+    const { upper, middle, lower } = computeBOLL(
+      kline,
+      this.period,
+      this.stdDev,
+    );
+    return [
+      ...collectSeriesVisiblePrices(upper, startBar, endBar),
+      ...collectSeriesVisiblePrices(middle, startBar, endBar),
+      ...collectSeriesVisiblePrices(lower, startBar, endBar),
+    ];
   }
 
   draw(ctx: CanvasRenderingContext2D, data: KlineLayerData): void {

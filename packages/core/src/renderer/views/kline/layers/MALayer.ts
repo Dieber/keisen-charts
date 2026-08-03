@@ -2,8 +2,9 @@ import type { ILayer } from "../../../base/ILayer";
 import { computeSMA } from "../../../../indicators/indicators";
 import type { LegendItem } from "../../../shared/legend";
 import { formatLegendValue } from "../../../shared/legend";
-import type { KlineLayerData } from "../../../../types/kline";
+import type { KlineBar, KlineLayerData } from "../../../../types/kline";
 import { drawSeriesLine } from "./drawSeriesLine";
+import { collectSeriesVisiblePrices } from "./visiblePriceExtent";
 
 const DEFAULT_COLORS: Record<number, string> = {
   5: "#2196F3",
@@ -47,6 +48,19 @@ export class MALayer implements ILayer<CanvasRenderingContext2D, KlineLayerData>
         },
       ],
     };
+  }
+
+  collectVisiblePrices(
+    kline: KlineBar[],
+    startBar: number,
+    endBar: number,
+  ): (number | null)[] {
+    if (kline.length === 0 || this.period <= 0) return [];
+    return collectSeriesVisiblePrices(
+      computeSMA(kline, this.period),
+      startBar,
+      endBar,
+    );
   }
 
   draw(ctx: CanvasRenderingContext2D, data: KlineLayerData): void {

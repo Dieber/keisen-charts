@@ -35,16 +35,36 @@ export const yToPrice = (
   return domain.max - (y / viewportHeight) * range;
 };
 
+/**
+ * 根据可见 K 线高低价（及可选的叠加指标值）计算 auto Y 域，并上下各延伸 paddingRatio。
+ */
 export const computeAutoPriceDomain = (
   bars: KlineBar[],
   paddingRatio = DEFAULT_VERTICAL_PADDING_RATIO,
+  extraValues?: Iterable<number | null | undefined>,
 ): PriceDomain => {
-  if (bars.length === 0) {
+  let min = Infinity;
+  let max = -Infinity;
+
+  for (const bar of bars) {
+    min = Math.min(min, bar.l);
+    max = Math.max(max, bar.h);
+  }
+
+  if (extraValues) {
+    for (const value of extraValues) {
+      if (value === null || value === undefined || !Number.isFinite(value)) {
+        continue;
+      }
+      min = Math.min(min, value);
+      max = Math.max(max, value);
+    }
+  }
+
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
     return { min: 0, max: 1 };
   }
 
-  const min = Math.min(...bars.map((bar) => bar.l));
-  const max = Math.max(...bars.map((bar) => bar.h));
   const range = max - min || 1;
   const padding = range * paddingRatio;
 
