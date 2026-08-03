@@ -4,8 +4,11 @@ import type { KlineBar } from "../types/kline";
 import {
   classifyTimeBoundary,
   computeTimeAxisTicks,
+  defaultFormatTimeLabel,
   DEFAULT_MIN_TIME_TICK_PIXEL_SPACING,
   MS_DAY,
+  MS_HOUR,
+  MS_MINUTE,
 } from "./timeAxis";
 import { indexToX } from "./viewport";
 
@@ -35,6 +38,53 @@ describe("timeAxis", () => {
     expect(classifyTimeBoundary(yearStart)).toBe("year");
     expect(classifyTimeBoundary(monthStart)).toBe("month");
     expect(classifyTimeBoundary(regularDay)).toBe("day");
+  });
+
+  test("classifyTimeBoundary detects minute and second boundaries", () => {
+    const hourStart = new Date(2024, 10, 15, 12, 0, 0).getTime();
+    const minuteStart = new Date(2024, 10, 15, 12, 30, 0).getTime();
+    const secondTick = new Date(2024, 10, 15, 12, 30, 45).getTime();
+
+    expect(classifyTimeBoundary(hourStart)).toBe("hour");
+    expect(classifyTimeBoundary(minuteStart)).toBe("minute");
+    expect(classifyTimeBoundary(secondTick)).toBe("second");
+  });
+
+  test("defaultFormatTimeLabel shows HH:mm:ss for second ticks and short spans", () => {
+    const timestamp = new Date(2024, 10, 15, 12, 30, 45).getTime();
+
+    expect(
+      defaultFormatTimeLabel({
+        timestamp,
+        visibleTimeSpanMs: 5 * MS_MINUTE,
+        boundary: "second",
+        locale: "en",
+        timezone: "local",
+        weekStart: 1,
+      }),
+    ).toBe("12:30:45");
+
+    expect(
+      defaultFormatTimeLabel({
+        timestamp: new Date(2024, 10, 15, 12, 30, 0).getTime(),
+        visibleTimeSpanMs: 2 * MS_MINUTE,
+        boundary: "minute",
+        locale: "en",
+        timezone: "local",
+        weekStart: 1,
+      }),
+    ).toBe("12:30:00");
+
+    expect(
+      defaultFormatTimeLabel({
+        timestamp: new Date(2024, 10, 15, 12, 30, 0).getTime(),
+        visibleTimeSpanMs: 2 * MS_HOUR,
+        boundary: "minute",
+        locale: "en",
+        timezone: "local",
+        weekStart: 1,
+      }),
+    ).toBe("12:30");
   });
 
   test("classifyTimeBoundary UTC uses Date.UTC midnight", () => {

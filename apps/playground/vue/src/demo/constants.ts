@@ -43,6 +43,7 @@ export const COMPACT_DEMO_FORMAT: PriceFormat = {
 };
 
 export const RESOLUTION_OPTIONS: { label: string; value: Resolution }[] = [
+  { label: "1s", value: "1S" },
   { label: "1m", value: "1" },
   { label: "3m", value: "3" },
   { label: "5m", value: "5" },

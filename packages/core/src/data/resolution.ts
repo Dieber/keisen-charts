@@ -5,7 +5,15 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 const WEEK = 7 * DAY;
 
+const SECONDS_RESOLUTION_RE = /^(\d+)S$/;
+
 export const resolutionToSeconds = (resolution: Resolution): number => {
+  const secondsMatch = SECONDS_RESOLUTION_RE.exec(resolution);
+  if (secondsMatch) {
+    const seconds = Number(secondsMatch[1]);
+    if (Number.isFinite(seconds) && seconds > 0) return seconds;
+  }
+
   if (resolution === "1D") return DAY;
   if (resolution === "1W") return WEEK;
   if (resolution === "1M") return 30 * DAY;
@@ -22,6 +30,9 @@ export const resolutionToMs = (resolution: Resolution): number =>
   resolutionToSeconds(resolution) * 1000;
 
 export const resolutionToTimeFrame = (resolution: Resolution): string => {
+  const secondsMatch = SECONDS_RESOLUTION_RE.exec(resolution);
+  if (secondsMatch) return `${secondsMatch[1]}s`;
+
   if (resolution === "1D") return "1d";
   if (resolution === "1W") return "1w";
   if (resolution === "1M") return "1M";

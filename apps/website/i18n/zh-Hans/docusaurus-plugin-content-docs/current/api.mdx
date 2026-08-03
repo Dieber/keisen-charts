@@ -74,7 +74,7 @@ React 将变更 / 指针处理写成 props；Vue 对应为 emits（无 `on*` pro
 ```ts
 type KlineBar = { t: number; o: number; h: number; l: number; c: number; v: number }
 
-type Resolution = `${number}` | "1D" | "1W" | "1M"
+type Resolution = `${number}` | `${number}S` | "1D" | "1W" | "1M"
 
 type GetDataFn = (params: {
   resolution: Resolution

@@ -3,8 +3,11 @@ import { resolutionToSeconds } from "@keisen-charts/vue";
 
 export { resolutionToSeconds };
 
-/** Map chart resolution → Binance kline interval (e.g. `1` → `1m`, `1D` → `1d`). */
+/** Map chart resolution → Binance kline interval (e.g. `1` → `1m`, `1S` → `1s`). */
 export const resolutionToBinanceInterval = (resolution: Resolution): string => {
+  const secondsMatch = /^(\d+)S$/.exec(resolution);
+  if (secondsMatch) return `${secondsMatch[1]}s`;
+
   if (resolution === "1D") return "1d";
   if (resolution === "1W") return "1w";
   if (resolution === "1M") return "1M";

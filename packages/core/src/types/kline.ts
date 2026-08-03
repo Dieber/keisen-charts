@@ -13,6 +13,7 @@ export type KlineBar = {
 /** 与 TradingView ResolutionString 对齐的子集 */
 export type Resolution =
   | `${number}`
+  | `${number}S`
   | "1D"
   | "1W"
   | "1M";

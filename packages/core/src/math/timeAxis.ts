@@ -7,7 +7,8 @@ import { getDomainSpan, indexToX } from "./viewport";
 /** X 轴刻度最小像素间距，控制密度（类似 TradingView） */
 export const DEFAULT_MIN_TIME_TICK_PIXEL_SPACING = 72;
 
-const MS_MINUTE = 60_000;
+const MS_SECOND = 1_000;
+const MS_MINUTE = 60 * MS_SECOND;
 const MS_HOUR = 60 * MS_MINUTE;
 const MS_DAY = 24 * MS_HOUR;
 const MS_WEEK = 7 * MS_DAY;
@@ -17,6 +18,7 @@ const MS_YEAR = 365 * MS_DAY;
 export type TimeAxisLocale = "en" | "zh";
 
 export type TimeBoundaryPriority =
+  | "second"
   | "minute"
   | "hour"
   | "day"
@@ -25,17 +27,19 @@ export type TimeBoundaryPriority =
   | "year";
 
 const BOUNDARY_PRIORITY_RANK: Record<TimeBoundaryPriority, number> = {
-  minute: 0,
-  hour: 1,
-  day: 2,
-  week: 3,
-  month: 4,
-  year: 5,
+  second: 0,
+  minute: 1,
+  hour: 2,
+  day: 3,
+  week: 4,
+  month: 5,
+  year: 6,
 };
 
 type GranularityLevel = TimeBoundaryPriority;
 
 const GRANULARITY_LADDER: GranularityLevel[] = [
+  "second",
   "minute",
   "hour",
   "day",
@@ -144,7 +148,11 @@ export const classifyTimeBoundary = (
     return "hour";
   }
 
-  return "minute";
+  if (seconds === 0) {
+    return "minute";
+  }
+
+  return "second";
 };
 
 const meetsGranularity = (
@@ -155,6 +163,9 @@ const meetsGranularity = (
 
 const formatHourMinute = (parts: DateTimeParts): string =>
   `${pad2(parts.hour)}:${pad2(parts.minute)}`;
+
+const formatHourMinuteSecond = (parts: DateTimeParts): string =>
+  `${pad2(parts.hour)}:${pad2(parts.minute)}:${pad2(parts.second)}`;
 
 const formatMonthDay = (parts: DateTimeParts): string =>
   `${pad2(parts.month + 1)}-${pad2(parts.day)}`;
@@ -182,6 +193,9 @@ export const defaultFormatTimeLabel = (ctx: TimeLabelContext): string => {
   }
 
   if (visibleTimeSpanMs < MS_DAY) {
+    if (boundary === "second" || visibleTimeSpanMs < 10 * MS_MINUTE) {
+      return formatHourMinuteSecond(parts);
+    }
     return formatHourMinute(parts);
   }
 
@@ -300,7 +314,9 @@ const selectStableTicks = (
       barIndex: candidate.barIndex,
       timestamp,
       priority:
-        candidate.priority === "minute" && candidate.timestamp === 0
+        (candidate.priority === "second" ||
+          candidate.priority === "minute") &&
+        candidate.timestamp === 0
           ? classifyTimeBoundary(timestamp, weekStart, timezone)
           : candidate.priority,
     };
@@ -484,4 +500,4 @@ export const computeTimeAxisTicks = (
   });
 };
 
-export { MS_DAY, MS_HOUR, MS_MINUTE, MS_MONTH, MS_WEEK, MS_YEAR };
+export { MS_DAY, MS_HOUR, MS_MINUTE, MS_MONTH, MS_SECOND, MS_WEEK, MS_YEAR };
